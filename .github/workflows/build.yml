@@ -89,18 +89,18 @@ jobs:
             ls -lah dist
             echo "::endgroup::"
 
-      - name: Build binary with Nuitka
-        if: ${{ inputs.build_binary }}
-        uses: devcontainers/ci@v0.3
-        with:
-          configFile: .devcontainer/devcontainer.json
-          runCmd: |
+      # - name: Build binary with Nuitka
+      #   if: ${{ inputs.build_binary }}
+      #   uses: devcontainers/ci@v0.3
+      #   with:
+      #     configFile: .devcontainer/devcontainer.json
+      #     runCmd: |
 
-            set -e
+      #       set -e
 
-            source .venv/bin/activate
+      #       source .venv/bin/activate
 
-            bash .github/scripts/build_binary.sh
+      #       bash .github/scripts/build_binary.sh
 
       - name: Upload wheel
         if: ${{ inputs.upload_artifacts }}
