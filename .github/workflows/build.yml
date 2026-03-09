@@ -90,7 +90,9 @@ jobs:
             echo "::endgroup::"
 
       - name: Build binary with Nuitka
+        id: nuitka
         if: ${{ inputs.build_binary }}
+        continue-on-error: true
         uses: devcontainers/ci@v0.3
         with:
           configFile: .devcontainer/devcontainer.json
@@ -111,8 +113,12 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      - name: Warn on Nuitka failure
+        if: ${{ steps.nuitka.outcome == 'failure' }}
+        run: echo "::warning::Nuitka binary build failed — skipping binary upload"
+
       - name: Upload binary
-        if: ${{ inputs.build_binary && inputs.upload_artifacts }}
+        if: ${{ steps.nuitka.outcome == 'success' && inputs.upload_artifacts }}
         uses: actions/upload-artifact@v4
         with:
           name: deply-binary-linux-amd64
