@@ -25,6 +25,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,18 +35,22 @@ jobs:
         env:
           TAG: ${{ inputs.release_tag }}
         run: |
+          set -euo pipefail
 
-          # Parse tag and version
+          echo "::group::Version check"
+
           toml_version=$(grep '^version' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "Parsed '$TAG' as Git tag"
           echo "Parsed '$toml_version' from pyproject.toml"
 
-          # validate
           if [[ "$TAG" != "$toml_version" ]]; then
-            echo "::error::Tag '$TAG' does not match pyproject.toml version '$toml_version'. Update pyproject.toml before releasing."
+            echo "::error::Tag '$TAG' does not match pyproject.toml version '$toml_version'"
             exit 1
           fi
+
           echo "Tag and pyproject.toml version match ('$TAG')"
+
+          echo "::endgroup::"
 
       - name: Lint, test & build wheel
         uses: devcontainers/ci@v0.3
@@ -53,22 +58,36 @@ jobs:
           configFile: .devcontainer/devcontainer.json
           runCmd: |
 
+            set -euxo pipefail
+
+            echo "::group::Environment"
+            python --version
+            pip --version
+            which python
+            echo "::endgroup::"
+
             source .venv/bin/activate
 
-            echo "Running health check on 'deply'"
+            echo "::group::CLI health check"
             deply --help
+            echo "::endgroup::"
 
-            echo "Checking src/ and tests/ for code style and common errors"
+            echo "::group::Ruff linting"
             ruff check src/ tests/
+            echo "::endgroup::"
 
-            echo "Verifying type annotations are consistent across src/"
+            echo "::group::Type checking"
             mypy src/
+            echo "::endgroup::"
 
-            echo "Running end-to-end tests"
+            echo "::group::Pytest"
             python -m pytest tests/ -v --tb=short
+            echo "::endgroup::"
 
-            echo "Building wheel"
+            echo "::group::Build wheel"
             uv build
+            ls -lah dist
+            echo "::endgroup::"
 
       - name: Build binary with Nuitka
         if: ${{ inputs.build_binary }}
@@ -77,11 +96,18 @@ jobs:
           configFile: .devcontainer/devcontainer.json
           runCmd: |
 
+            set -euxo pipefail
+
             source .venv/bin/activate
+
+            echo "::group::Nuitka build"
 
             python -m nuitka \
               --onefile \
+              --jobs=$(nproc) \
               --assume-yes-for-downloads \
+              --show-progress \
+              --show-scons \
               --output-filename=deply \
               --output-dir=dist/ \
               --include-package=rich \
@@ -95,8 +121,12 @@ jobs:
               --include-distribution-metadata=click \
               src/deply/cli.py
 
-            echo "Verifying binary"
+            echo "::endgroup::"
+
+            echo "::group::Verify binary"
+            ls -lah dist
             ./dist/deply --help
+            echo "::endgroup::"
 
       - name: Upload wheel
         if: ${{ inputs.upload_artifacts }}
