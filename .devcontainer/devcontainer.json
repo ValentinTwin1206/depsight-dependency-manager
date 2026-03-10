@@ -16,7 +16,8 @@
                 "eamodio.gitlens",
                 "GitHub.copilot",
                 "github.vscode-github-actions",
-                "redhat.vscode-yaml"
+                "redhat.vscode-yaml",
+                "mechatroner.rainbow-csv"
             ]
         }
     },

@@ -12,9 +12,9 @@ from deply.utils.utils import discover_plugins, resolve_user_dir
 #
 # APP
 # # # # # # # #
-APP_LICENSE = metadata("deply")["License-Expression"]
-APP_NAME = metadata("deply")["Name"]
-DEV_MODE = os.getenv("DEPLY_ENV", "production").lower() == "development"
+APP_LICENSE: str = metadata("deply")["License-Expression"]
+APP_NAME: str = metadata("deply")["Name"]
+DEV_MODE: bool = os.getenv("DEPLY_ENV", "production").lower() == "development"
 
 #
 # PLUGINS
@@ -24,30 +24,31 @@ SUPPORTED_PLUGINS: dict = discover_plugins(APP_NAME)
 #
 # PATHS
 # # # # # # # #
-USER_HOME = Path.home()
-DEPLY_HOME = resolve_user_dir(APP_NAME, dev_mode=DEV_MODE)
-USER_LOG_DIR = DEPLY_HOME / "logs"
+USER_HOME: Path = Path.home()
+DEPLY_HOME: Path = resolve_user_dir(APP_NAME, dev_mode=DEV_MODE)
+USER_LOG_DIR: Path = DEPLY_HOME / "logs"
+USER_DATA_DIR: Path = DEPLY_HOME / "data"
 
 #
 # LOGGING
 # # # # # # # #
-LOG_DIR = f"{APP_NAME}./logs"
-LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(name)s][%(message)s]"
-LOG_DATE_FORMAT = "%Y-%m-%d][%H:%M:%S"
-LOG_MAX_BYTES = 5 * 1024 * 1024  # 5 MB per file
-LOG_BACKUP_COUNT = 3
-LOG_FILE_NAME = f"{APP_NAME}.log"
-LOG_JSONL_FILE_NAME = f"{APP_NAME}.jsonl"
-LOG_LEVEL = logging.INFO
+LOG_DIR: str = f"{APP_NAME}./logs"
+LOG_FORMAT: str = "[%(asctime)s][%(levelname)s][%(name)s][%(message)s]"
+LOG_DATE_FORMAT: str = "%Y-%m-%d][%H:%M:%S"
+LOG_MAX_BYTES: int = 5 * 1024 * 1024  # 5 MB per file
+LOG_BACKUP_COUNT: int = 3
+LOG_FILE_NAME: str = f"{APP_NAME}.log"
+LOG_JSONL_FILE_NAME: str = f"{APP_NAME}.jsonl"
+LOG_LEVEL: int = logging.INFO
 
 #
 # TUI
 # # # # # # # #
-COLOR_AMBER = "#FFBF00"           # amber
-COLOR_DIM_ORANGE = "#CD853F"      # peru
-COLOR_PEACH = "#FFDAB9"           # peach-puff
+COLOR_AMBER: str = "#FFBF00"           # amber
+COLOR_DIM_ORANGE: str = "#CD853F"      # peru
+COLOR_PEACH: str = "#FFDAB9"           # peach-puff
 
-APP_BANNER = f"""
+APP_BANNER: str = f"""
 [bold {COLOR_DIM_ORANGE}]  ____             _
  |  _ \\  ___ _ __ | |_   _
  | | | |/ _ \\ '_ \\| | | | |

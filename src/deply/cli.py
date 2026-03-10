@@ -47,7 +47,7 @@ def _register_plugin(plugin_name: str):
         Key in `SUPPORTED_PLUGINS` identifying the plugin (e.g. `"uv"`).
     """
 
-    @main.group(plugin_name, help=f"Commands for the {plugin_name} plugin.")
+    @main.group(plugin_name, help=f"Commands for the '{plugin_name}' package manager.")
     @click.pass_context
     def plugin_group(ctx):
         """Entry point for a plugin subgroup that stores the plugin name in the context."""
@@ -70,13 +70,19 @@ def _register_plugin(plugin_name: str):
         is_flag=True,
         help="Enable verbose logging."
     )
+    @click.option(
+        "--as-csv",
+        is_flag=True,
+        help="Export scan results to a CSV file."
+    )
     @click.pass_context
-    def scan(ctx, project_dir, verbose):
+    def scan(ctx, project_dir, verbose, as_csv):
         """Scan project dependencies using the selected plugin."""
         options = {
             "plugin_name": ctx.obj["plugin_name"],
             "project_dir": project_dir,
             "verbose": verbose,
+            "as_csv": as_csv,
         }
         sys.exit(run_handler("scan", scan_handler, options))
 

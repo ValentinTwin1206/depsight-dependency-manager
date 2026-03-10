@@ -18,12 +18,12 @@ class TestPluginFactoryCreate:
         assert plugin.name == "uv"
         assert hasattr(plugin, "dependencies")
 
-    def test_create_vsc_plugin(self):
-        """Creating the 'vsc' plugin returns a valid BasePlugin instance."""
-        plugin = PluginFactory.create("vsc")
+    def test_create_vsce_plugin(self):
+        """Creating the 'vsce' plugin returns a valid BasePlugin instance."""
+        plugin = PluginFactory.create("vsce")
 
         assert isinstance(plugin, BasePlugin)
-        assert plugin.name == "vsc"
+        assert plugin.name == "vsce"
         assert hasattr(plugin, "dependencies")
 
     def test_create_unknown_plugin_raises_value_error(self):

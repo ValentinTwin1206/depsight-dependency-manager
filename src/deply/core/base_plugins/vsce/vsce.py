@@ -8,7 +8,7 @@ from deply.core.base_plugins.base import BasePlugin
 from deply.core.dependency import Dependency
 
 
-class VSCPlugin(BasePlugin):
+class VSCEPlugin(BasePlugin):
     """Plugin for **VS Code** extensions."""
 
     def __init__(self) -> None:
@@ -17,7 +17,7 @@ class VSCPlugin(BasePlugin):
 
     @property
     def name(self) -> str:
-        return "vsc"
+        return "vsce"
 
     @property
     def dependency_files(self) -> tuple[str, ...]:

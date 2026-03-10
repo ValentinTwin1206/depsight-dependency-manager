@@ -33,6 +33,7 @@ def run_handler(command: str, handler: Callable, options: dict):
     plugin_name: str = options["plugin_name"]
     project_dir = Path(options["project_dir"]).resolve()
     verbose: bool = options.get("verbose", False)
+    as_csv: bool = options.get("as_csv", False)
 
     # Init logger
     log_level = logging.DEBUG if verbose else logging.INFO
@@ -46,7 +47,7 @@ def run_handler(command: str, handler: Callable, options: dict):
 
         # Execute public handler under '/commands/<command>/<command>.py'
         logger.info(f"Running handler for command '{command}'...")
-        handler(plugin, project_dir, logger)
+        handler(plugin, project_dir, logger, as_csv=as_csv)
 
         logger.info(f"Command '{command}' executed successfully. Terminating with exit code 0.")
         return 0

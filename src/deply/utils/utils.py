@@ -11,10 +11,9 @@ def resolve_user_dir(app_name: str, *, dev_mode: bool) -> Path:
 
     Parameters
     ----------
-    app_name:
-        Application name (used to build `~/.{app_name}`).
-    dev_mode:
-        If `True`, return the repository root directory.
+    app_name - Application name (used to build `~/.{app_name}`).
+    
+    dev_mode - If `True`, return the repository root directory.
 
     Returns
     -------
@@ -30,12 +29,11 @@ def discover_plugins(app_name: str) -> dict:
     """Build the full plugin registry from entry points.
 
     All plugins (built-in and third-party) are discovered via the
-    ``<app_name>.plugins`` entry-point group declared in ``pyproject.toml``.
+    `<app_name>.plugins` entry-point group declared in `pyproject.toml`.
 
     Parameters
     ----------
-    app_name - Application name used to look up the entry-point group
-              (e.g. ``"deply"`` → group ``"deply.plugins"``).
+    app_name - Application name used to look up the entry-point group (e.g. `"deply"`).
 
     Returns
     -------
@@ -44,8 +42,9 @@ def discover_plugins(app_name: str) -> dict:
     """
     registry: dict[str, type] = {}
 
-    eps = importlib.metadata.entry_points(group=f"{app_name}.plugins")
-    for ep in eps:
+    # discover plugins via entry points
+    entry_points = importlib.metadata.entry_points(group=f"{app_name}.plugins")
+    for ep in entry_points:
         try:
             plugin_cls = ep.load()
             registry[ep.name] = plugin_cls
