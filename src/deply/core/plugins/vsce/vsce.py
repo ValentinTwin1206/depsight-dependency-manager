@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 
 # own imports
-from deply.core.base_plugins.base import BasePlugin
-from deply.core.dependency import Dependency
+from deply.core.plugins.base import BasePlugin
+from deply.core.plugins.dependency import Dependency
 
 
 class VSCEPlugin(BasePlugin):

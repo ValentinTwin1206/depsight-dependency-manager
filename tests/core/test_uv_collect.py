@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 # own imports
-from deply.core.base_plugins.uv.uv import UVPlugin
-from deply.core.dependency import Dependency
+from deply.core.plugins.uv.uv import UVPlugin
+from deply.core.plugins.dependency import Dependency
 
 
 class TestUVPluginCollect:

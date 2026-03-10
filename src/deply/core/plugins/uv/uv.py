@@ -3,8 +3,8 @@ import tomllib
 from pathlib import Path
 
 # own imports
-from deply.core.base_plugins.base import BasePlugin
-from deply.core.dependency import Dependency, packageType
+from deply.core.plugins.base import BasePlugin
+from deply.core.plugins.dependency import Dependency, packageType
 
 
 class UVPlugin(BasePlugin):

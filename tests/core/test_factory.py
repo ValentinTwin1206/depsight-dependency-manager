@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 
 # own imports
-from deply.core.base_plugins.base import BasePlugin
-from deply.core.factory import PluginFactory
+from deply.core.plugins.base import BasePlugin
+from deply.core.plugins.factory import PluginFactory
 
 
 class TestPluginFactoryCreate:

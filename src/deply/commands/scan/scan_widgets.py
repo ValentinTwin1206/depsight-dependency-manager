@@ -6,7 +6,7 @@ from rich import box
 from rich.table import Table
 from rich.text import Text
 
-from deply.core.dependency import Dependency
+from deply.core.plugins.dependency import Dependency
 from deply.utils.constants import COLOR_AMBER, COLOR_DIM_ORANGE, COLOR_PEACH
 
 

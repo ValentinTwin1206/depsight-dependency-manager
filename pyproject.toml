@@ -30,8 +30,8 @@ deply = "deply.cli:main"
 
 # Plugin support
 [project.entry-points."deply.plugins"]
-uv = "deply.core.base_plugins.uv.uv:UVPlugin"
-vsce = "deply.core.base_plugins.vsce.vsce:VSCEPlugin"
+uv = "deply.core.plugins.uv.uv:UVPlugin"
+vsce = "deply.core.plugins.vsce.vsce:VSCEPlugin"
 
 [build-system]
 requires = ["setuptools>=61.0"]

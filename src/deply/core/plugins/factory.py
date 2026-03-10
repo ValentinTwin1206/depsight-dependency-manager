@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 # own imports
-from deply.core.base_plugins.base import BasePlugin
+from deply.core.plugins.base import BasePlugin
 from deply.utils.constants import SUPPORTED_PLUGINS
 
 

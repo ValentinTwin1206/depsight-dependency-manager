@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Protocol, runtime_checkable
 
 # own imports
-from deply.core.dependency import Dependency
+from deply.core.plugins.dependency import Dependency
 
 @runtime_checkable
 class BasePlugin(Protocol):

@@ -6,7 +6,7 @@ from typing import Callable
 from rich.console import Console
 
 # own imports
-from deply.core.factory import PluginFactory
+from deply.core.plugins.factory import PluginFactory
 from deply.utils.constants import SUPPORTED_PLUGINS
 from deply.utils.logger import get_logger
 
