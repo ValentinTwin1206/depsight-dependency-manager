@@ -2,8 +2,10 @@ ARG PYTHON_VERSION
 FROM mcr.microsoft.com/devcontainers/python:${PYTHON_VERSION}
 
 # Install uv (fast Python package manager)
-ARG UV_VERSION=0.10.9
-COPY --from=ghcr.io/astral-sh/uv:${UV_VERSION} /uv /uvx /usr/local/bin/
+ARG UV_VERSION
+RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh \
+ && mv /root/.local/bin/uv /usr/local/bin/uv \
+ && mv /root/.local/bin/uvx /usr/local/bin/uvx
 
 # Prevent Python stdout buffering
 ENV PYTHONUNBUFFERED=1
