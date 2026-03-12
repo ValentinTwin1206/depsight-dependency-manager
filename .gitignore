@@ -148,8 +148,8 @@ ENV/
 env.bak/
 venv.bak/
 
-# Deply local data (dev mode)
-.deply/
+# Depsight local data (dev mode)
+.depsight/
 
 # Spyder project settings
 .spyderproject

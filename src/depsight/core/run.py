@@ -6,15 +6,15 @@ from typing import Callable
 from rich.console import Console
 
 # own imports
-from deply.core.plugins.factory import PluginFactory
-from deply.utils.constants import SUPPORTED_PLUGINS
-from deply.utils.logger import get_logger
+from depsight.core.plugins.factory import PluginFactory
+from depsight.utils.constants import SUPPORTED_PLUGINS
+from depsight.utils.logger import get_logger
 
 
 def run_handler(command: str, handler: Callable, options: dict):
     """Resolve a plugin by name and execute the requested command.
 
-    Uses :class:`~deply.core.factory.PluginFactory` to instantiate the plugin
+    Uses :class:`~depsight.core.factory.PluginFactory` to instantiate the plugin
     from the registry and dispatches the given `command` via the provided
     `handler` callable.
 
@@ -56,5 +56,5 @@ def run_handler(command: str, handler: Callable, options: dict):
         logger.warning("Execution of command %r failed", command)
         logger.error(exc)
         console.print(f"{exc!s}")
-        console.print("[bold red]Terminating Deply with exit code '1'.[/bold red]")
+        console.print("[bold red]Terminating Depsight with exit code '1'.[/bold red]")
         return 1

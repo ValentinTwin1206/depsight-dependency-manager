@@ -5,7 +5,7 @@ from pathlib import Path
 from logging.handlers import RotatingFileHandler
 
 # own imports
-from deply.utils.constants import (
+from depsight.utils.constants import (
     LOG_BACKUP_COUNT,
     LOG_DATE_FORMAT,
     LOG_FILE_NAME,

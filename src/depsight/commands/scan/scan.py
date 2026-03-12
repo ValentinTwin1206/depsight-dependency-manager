@@ -5,8 +5,8 @@ from pathlib import Path
 from rich.console import Console
 
 # own imports
-from deply.commands.scan.scan_widgets import ScanResultTableViewer
-from deply.utils.constants import COLOR_DIM_ORANGE, COLOR_PEACH, USER_DATA_DIR
+from depsight.commands.scan.scan_widgets import ScanResultTableViewer
+from depsight.utils.constants import COLOR_DIM_ORANGE, COLOR_PEACH, USER_DATA_DIR
 
 
 def scan_handler(plugin, project_dir: str | Path, logger: logging.Logger, *, as_csv: bool = False):

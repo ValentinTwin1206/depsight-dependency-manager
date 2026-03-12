@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def resolve_user_dir(app_name: str, *, dev_mode: bool) -> Path:
-    """Return the user-level base directory for Deply.
+    """Return the user-level base directory for Depsight.
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ def discover_plugins(app_name: str) -> dict:
 
     Parameters
     ----------
-    app_name - Application name used to look up the entry-point group (e.g. `"deply"`).
+    app_name - Application name used to look up the entry-point group (e.g. `"depsight"`).
 
     Returns
     -------

@@ -1,5 +1,5 @@
 {
-    "name": "Deply DevContainer",
+    "name": "Depsight DevContainer",
     "build": {
         "context": "..",
         "dockerfile": "Dockerfile",
@@ -26,8 +26,8 @@
         }
     },
     "containerEnv": {
-        "APP_NAME": "DEPLY",
-        "DEPLY_ENV": "development"
+        "APP_NAME": "DEPSIGHT",
+        "DEPSIGHT_ENV": "development"
     },
     "forwardPorts": [8000],
     "portsAttributes": {

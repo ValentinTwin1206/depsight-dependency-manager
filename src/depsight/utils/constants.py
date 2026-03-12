@@ -7,14 +7,14 @@ from importlib.metadata import metadata
 from pathlib import Path
 
 # own imports
-from deply.utils.utils import discover_plugins, resolve_user_dir
+from depsight.utils.utils import discover_plugins, resolve_user_dir
 
 #
 # APP
 # # # # # # # #
-APP_LICENSE: str = metadata("deply")["License-Expression"]
-APP_NAME: str = metadata("deply")["Name"]
-DEV_MODE: bool = os.getenv("DEPLY_ENV", "production").lower() == "development"
+APP_LICENSE: str = metadata("depsight")["License-Expression"]
+APP_NAME: str = metadata("depsight")["Name"]
+DEV_MODE: bool = os.getenv("DEPSIGHT_ENV", "production").lower() == "development"
 
 #
 # PLUGINS
@@ -25,9 +25,9 @@ SUPPORTED_PLUGINS: dict = discover_plugins(APP_NAME)
 # PATHS
 # # # # # # # #
 USER_HOME: Path = Path.home()
-DEPLY_HOME: Path = resolve_user_dir(APP_NAME, dev_mode=DEV_MODE)
-USER_LOG_DIR: Path = DEPLY_HOME / "logs"
-USER_DATA_DIR: Path = DEPLY_HOME / "data"
+DEPSIGHT_HOME: Path = resolve_user_dir(APP_NAME, dev_mode=DEV_MODE)
+USER_LOG_DIR: Path = DEPSIGHT_HOME / "logs"
+USER_DATA_DIR: Path = DEPSIGHT_HOME / "data"
 
 #
 # LOGGING
@@ -48,11 +48,11 @@ COLOR_DIM_ORANGE: str = "#CD853F"      # peru
 COLOR_PEACH: str = "#FFDAB9"           # peach-puff
 
 APP_BANNER: str = f"""
-[bold {COLOR_DIM_ORANGE}]  ____             _
- |  _ \\  ___ _ __ | |_   _
- | | | |/ _ \\ '_ \\| | | | |
- | |_| |  __/ |_) | | |_| |
- |____/ \\___| .__/|_|\\__, |
-            |_|      |___/[/bold {COLOR_DIM_ORANGE}]
+[bold {COLOR_DIM_ORANGE}]  ____                 _       _     _
+ |  _ \\  ___ _ __  ___(_) __ _| |__ | |_
+ | | | |/ _ \\ '_ \\/ __| |/ _` | '_ \\| __|
+ | |_| |  __/ |_) \\__ \\ | (_| | | | | |_
+ |____/ \\___| .__/|___/_|\\__, |_| |_|\\__|
+            |_|          |___/[/bold {COLOR_DIM_ORANGE}]
  [dim {COLOR_PEACH}]A modern dependency analysis CLI[/dim {COLOR_PEACH}]
 """

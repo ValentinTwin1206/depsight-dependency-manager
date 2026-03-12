@@ -11,8 +11,8 @@ RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh \
 ENV PYTHONUNBUFFERED=1
 
 # App environment
-ENV APP_NAME=DEPLY
-ENV DEPLY_ENV=development
+ENV APP_NAME=DEPSIGHT
+ENV DEPSIGHT_ENV=development
 
 # MkDocs dev server port
 EXPOSE 8000

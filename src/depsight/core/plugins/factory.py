@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 # own imports
-from deply.core.plugins.base import BasePlugin
-from deply.utils.constants import SUPPORTED_PLUGINS
+from depsight.core.plugins.base import BasePlugin
+from depsight.utils.constants import SUPPORTED_PLUGINS
 
 
 class PluginFactory:

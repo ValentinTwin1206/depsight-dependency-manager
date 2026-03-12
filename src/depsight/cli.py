@@ -3,9 +3,9 @@ import sys
 # third-party imports
 import rich_click as click
 
-from deply.commands.scan import scan_handler
-from deply.core.run import run_handler
-from deply.utils.constants import APP_BANNER, COLOR_DIM_ORANGE, COLOR_PEACH, SUPPORTED_PLUGINS
+from depsight.commands.scan import scan_handler
+from depsight.core.run import run_handler
+from depsight.utils.constants import APP_BANNER, COLOR_DIM_ORANGE, COLOR_PEACH, SUPPORTED_PLUGINS
 
 # rich-click styling
 click.rich_click.USE_RICH_MARKUP = True
@@ -22,7 +22,7 @@ click.rich_click.STYLE_METAVAR = COLOR_PEACH
 click.rich_click.STYLE_METAVAR_APPEND = COLOR_PEACH
 click.rich_click.STYLE_ARGUMENT = COLOR_PEACH
 click.rich_click.COMMAND_GROUPS = {
-    "deply": [{"name": "Package Managers", "commands": list(SUPPORTED_PLUGINS.keys())}]
+    "depsight": [{"name": "Package Managers", "commands": list(SUPPORTED_PLUGINS.keys())}]
 }
 
 
@@ -38,7 +38,7 @@ def _register_plugin(plugin_name: str):
     Creates a new :func:`click.Group` attached to :func:`main` and registers
     all available sub-commands (e.g. `scan`) under it.  This function is
     called at **module import time** for every key in
-    :data:`~deply.core.registry.SUPPORTED_PLUGINS` so that the commands are
+    :data:`~depsight.core.registry.SUPPORTED_PLUGINS` so that the commands are
     available before Click parses the CLI arguments.
 
     Parameters

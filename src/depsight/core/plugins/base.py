@@ -7,14 +7,14 @@ from pathlib import Path
 from typing import Protocol, runtime_checkable
 
 # own imports
-from deply.core.plugins.dependency import Dependency
+from depsight.core.plugins.dependency import Dependency
 
 @runtime_checkable
 class BasePlugin(Protocol):
-    """Contract for deply plugins.
+    """Contract for depsight plugins.
 
     Any class that satisfies this protocol can be registered as a plugin,
-    either as a built-in or via the `deply.plugins` entry-point group.
+    either as a built-in or via the `depsight.plugins` entry-point group.
 
     Attributes
     ----------

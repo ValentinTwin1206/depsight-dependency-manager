@@ -6,8 +6,8 @@ from rich import box
 from rich.table import Table
 from rich.text import Text
 
-from deply.core.plugins.dependency import Dependency
-from deply.utils.constants import COLOR_DIM_ORANGE, COLOR_PEACH
+from depsight.core.plugins.dependency import Dependency
+from depsight.utils.constants import COLOR_DIM_ORANGE, COLOR_PEACH
 
 
 class ScanResultTableViewer:
@@ -21,7 +21,7 @@ class ScanResultTableViewer:
 
     Parameters
     ----------
-    result - A list of :class:`~deply.core.dependency.Dependency` objects.
+    result - A list of :class:`~depsight.core.dependency.Dependency` objects.
     """
 
     def __init__(self, result: list[Dependency]) -> None:

@@ -3,8 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 # own imports
-from deply.core.plugins.vsce.vsce import VSCEPlugin
-from deply.core.plugins.dependency import Dependency
+from depsight.core.plugins.vsce.vsce import VSCEPlugin
+from depsight.core.plugins.dependency import Dependency
 
 
 class TestVSCEPluginCollect:

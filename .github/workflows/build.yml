@@ -70,7 +70,7 @@ jobs:
             source .venv/bin/activate
 
             echo "::group::CLI health check"
-            deply --help
+            depsight --help
             echo "::endgroup::"
 
             echo "::group::Ruff linting"
@@ -94,19 +94,15 @@ jobs:
         if: ${{ inputs.upload_artifacts }}
         uses: actions/upload-artifact@v4
         with:
-          name: deply-wheel
+          name: depsight-wheel
           path: dist/*.whl
           retention-days: 14
           if-no-files-found: error
 
-      - name: Rename and upload wheel to GitHub Release
+      - name: Upload wheel to GitHub Release
         if: ${{ inputs.release_tag != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          version="${{ inputs.release_tag }}"
-          src=$(ls dist/*.whl)
-          dest="dist/deply_${version}.whl"
-          mv "$src" "$dest"
-          gh release upload "$version" "$dest" --clobber
+          gh release upload "${{ inputs.release_tag }}" dist/*.whl --clobber

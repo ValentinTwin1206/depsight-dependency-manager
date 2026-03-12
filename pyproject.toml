@@ -1,5 +1,5 @@
 [project]
-name = "deply"
+name = "depsight"
 version = "0.1.0"
 description = "A modular dependency analysis framework"
 dependencies = [
@@ -21,12 +21,12 @@ docs = [
 ]
 
 [project.scripts]
-deply = "deply.cli:main"
+depsight = "depsight.cli:main"
 
 # Plugin support
-[project.entry-points."deply.plugins"]
-uv = "deply.core.plugins.uv.uv:UVPlugin"
-vsce = "deply.core.plugins.vsce.vsce:VSCEPlugin"
+[project.entry-points."depsight.plugins"]
+uv = "depsight.core.plugins.uv.uv:UVPlugin"
+vsce = "depsight.core.plugins.vsce.vsce:VSCEPlugin"
 
 [build-system]
 requires = ["setuptools>=61.0"]

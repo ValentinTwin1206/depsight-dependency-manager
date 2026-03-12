@@ -1,4 +1,4 @@
-# Deply - Dependency Analysis Framework
+# Depsight - Dependency Analysis Framework
 
 ## Installation
 
@@ -25,7 +25,7 @@ Coming soon..
 
 - Wait for the containers to build and start
 - Once ready, you'll have a fully configured development environment with all dependencies installed
-- Open a terminal inside the DevContainer and run `deply --help`
+- Open a terminal inside the DevContainer and run `depsight --help`
 
 ### Run Tests
 
@@ -64,4 +64,4 @@ Use this to publish an official versioned build. The wheel is automatically atta
 - Navigate to your repository on GitHub and click **Releases** → **Draft a new release**
 - Create a new tag matching the version in `pyproject.toml` exactly (e.g. `1.2.3`)
 - Click **Publish release**
-- The **On Release** workflow triggers automatically, runs the full CI pipeline, and uploads `deply_{version}.whl` to the release assets
+- The **On Release** workflow triggers automatically, runs the full CI pipeline, and uploads the `.whl` to the release assets
