@@ -44,7 +44,6 @@ LOG_LEVEL: int = logging.INFO
 #
 # TUI
 # # # # # # # #
-COLOR_AMBER: str = "#FFBF00"           # amber
 COLOR_DIM_ORANGE: str = "#CD853F"      # peru
 COLOR_PEACH: str = "#FFDAB9"           # peach-puff
 
