@@ -29,10 +29,8 @@ Before you begin, make sure the following tools are installed on your machine:
 - Open a terminal and run:
 
     ```bash
-    git clone https://github.com/ValentinTwin1206/docker-python-tui-learning-course.git
+    git clone https://github.com/ValentinTwin1206/depsight-dependency-manager.git
     ```
-
-    > Enter your GitHub token as password
 
 ### Clone the Target NPM Repository
 
@@ -41,8 +39,6 @@ Before you begin, make sure the following tools are installed on your machine:
     ```bash
     git clone https://github.com/ValentinTwin1206/docker-js-fullstack-learning-course.git
     ```
-
-    > Enter your GitHub token as password
 
 ### Create a Repository from the Depsight Plugin Template
 
@@ -95,3 +91,28 @@ Before you begin, make sure the following tools are installed on your machine:
     > Enter your **PAT** as the password when prompted
 
 
+## Start the DevContainer
+
+- Open a terminal, navigate to the cloned plugin repository, and open it in VS Code:
+
+    ```bash
+    cd deply-third-party-npm-plugin-solution && code .
+    ```
+
+    !!! danger "WSL Environments"
+        If you are using **WSL** and the `code .` command fails, check whether Windows interoperability is disabled in your `/etc/wsl.conf`:
+
+        ```ini
+        [interop]
+        enabled=false
+        ```
+
+        Set `enabled=true` and restart your WSL session, then try again.
+
+- VS Code will detect the `.devcontainer` configuration and show a prompt in the bottom-right corner. Click **Reopen in Container** to build and start the DevContainer.
+
+    ![Reopen in Container](../../images/reopen_in_container.png)
+
+- With the [DevContainer environment set up](../getting-started/getting-started.md), `depsight` is available directly from the command line:
+
+    ![Depsight CLI](../../images/depsight_cli.png)
