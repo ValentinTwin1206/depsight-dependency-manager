@@ -1,6 +1,6 @@
 [project]
 name = "depsight"
-version = "0.2.0"
+version = "0.3.0"
 description = "A modular dependency analysis framework"
 dependencies = [
     "click>=8.1.7",

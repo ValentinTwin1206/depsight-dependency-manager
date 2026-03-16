@@ -3,6 +3,7 @@ import sys
 # third-party imports
 import rich_click as click
 
+from depsight import __version__
 from depsight.commands.scan import scan_handler
 from depsight.core.run import run_handler
 from depsight.utils.constants import APP_BANNER, COLOR_DIM_ORANGE, COLOR_PEACH, SUPPORTED_PLUGINS
@@ -27,6 +28,7 @@ click.rich_click.COMMAND_GROUPS = {
 
 
 @click.group()
+@click.version_option(__version__, "--version", "-V", prog_name="depsight")
 def main():
     """A modern TUI framework for scanning local project dependencies."""
     pass
