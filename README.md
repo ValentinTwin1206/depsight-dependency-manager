@@ -7,7 +7,7 @@
 Go to the [Releases](../../releases/latest) page of the Depsigt GitHub repository and download the `.whl` file from the latest release
 
 
-#### Pip
+#### pip
 
 ```bash
 pip install depsight-<version>-py3-none-any.whl
@@ -61,9 +61,32 @@ Coming soon...
   pytest tests/ -v
   ```
 
-### Build With GitHub
+### Build Docs
 
-#### Workflow Dispatch
+- Open a terminal inside the DevContainer
+- Activate the virtual environment:
+
+  ```bash
+  source .venv/bin/activate
+  ```
+
+- Serve the documentation locally with live reload:
+
+  ```bash
+  mkdocs serve
+  ```
+
+  The site will be available at `http://127.0.0.1:8000`.
+
+- Alternatively, build the static site as a `site/` directory:
+
+  ```bash
+  mkdocs build
+  ```
+
+## Build
+
+### Pre-release
 
 Use this to trigger a build manually at any time without creating a release.
 
@@ -74,7 +97,7 @@ Use this to trigger a build manually at any time without creating a release.
 - Set the desired `uv_version` (defaults to `0.10.9`) and click **Run workflow**
 - Once the run completes, the wheel is available under the run's **Artifacts** section (if enabled)
 
-#### Release
+### Release
 
 Use this to publish an official versioned build. The wheel is automatically attached to the GitHub Release.
 
