@@ -30,7 +30,7 @@ Before you begin, make sure the following tools are installed on your machine:
 - Navigate to [Docker Hub](https://hub.docker.com) and sign in
 - Select **MyHub** in the top-level navigation menu
 - Locate and click **Create repository**
-- Give it a name (e.g., `depsight-npm-plugin`) and set the visibility to **Public**, then click **Create**
+- Give it a name (e.g., `depsight_npm_plugin`) and set the visibility to **Public**, then click **Create**
 
     ![Create Docker Repository](../../images/create_docker_repo.png)
 
@@ -46,6 +46,14 @@ Before you begin, make sure the following tools are installed on your machine:
     !!! warning "Save your token now"
         Copy the generated token and store it in a safe place immediately. Docker Hub will **never show it again** once you leave or reload the page.
 
+- Open a terminal and run:
+
+    ```bash
+    docker login -u <your-docker-username>
+    ```
+
+    > Enter your **PAT** as the password when prompted
+    
 ### Configure Your GitHub Secrets and Variables
 
 - Navigate to your forked repository on GitHub and click **Settings** in the repository navigation bar
@@ -62,17 +70,6 @@ Before you begin, make sure the following tools are installed on your machine:
     |---|---|
     | `DOCKER_USERNAME` | Your Docker Hub username |
     | `DOCKER_REPOSITORY` | Your Docker Hub repository path (e.g., `yourusername/depsight-npm-plugin`) |
-
-### Authenticate the Docker Daemon
-
-- Open a terminal and run:
-
-    ```bash
-    docker login -u <your-docker-username>
-    ```
-
-    > Enter your **PAT** as the password when prompted
-
 
 ## Start the DevContainer
 

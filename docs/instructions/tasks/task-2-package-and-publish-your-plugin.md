@@ -19,16 +19,15 @@ The template repository already includes a `Dockerfile` and a GitHub Actions wor
 
 ### Build and Push Image
 
-Your plugin repository already integrates following GitHub action triggers:
+#### Workflow Dispatch
 
-- **Workflow Dispatch**: A manual trigger for testing the build without publishing. Use this to verify your `Dockerfile` and workflow configuration before creating a release.
-- **Release Trigger**: Fires automatically when a GitHub release is published and pushes the image to Docker Hub and the wheel to the release assets.
-
-To test the build, navigate to the **Actions** tab in your GitHub repository, select the **Manual Dispatch** workflow, and click **Run workflow**. Set the version to match the one in `pyproject.toml` and leave the remaining inputs at their defaults.
+The repository provides a manual trigger for testing the build without publishing. Use this to verify your `Dockerfile` and workflow configuration before creating a release. To trigger the *Workflow Dispatch*, navigate to the **Actions** tab in your GitHub repository, select the **Manual Dispatch** workflow, and click **Run workflow**. Set the version to match the one in `pyproject.toml` and leave the remaining inputs at their defaults.
 
 ![Run dispatch](../../images/run_dispatch.png)
 
-Once the build succeeds, create a GitHub release to publish both artifacts:
+#### GitHub Release
+
+Once the build succeeds, create a GitHub release to push the image to Docker Hub and the wheel to the release assets:
 
 - Set the `version` field in your `pyproject.toml` to `1.0.0`.
 - Navigate to your repository on GitHub and click **Releases** in the right sidebar.
