@@ -1,0 +1,44 @@
+#
+# Replicate the Microsoft DevContainer base image setup
+# # # # # # # # # # #
+ARG PYTHON_VERSION="3.12"
+FROM python:${PYTHON_VERSION}
+
+# Install system tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sudo \
+    zsh \
+    git \
+    curl \
+    wget \
+    gnupg \
+    procps \
+    lsof \
+    htop \
+    zip \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create the vscode user with passwordless sudo access
+ARG USER_NAME=vscode
+RUN groupadd --gid 1000 ${USER_NAME} && \
+    useradd --uid 1000 --gid 1000 --shell /bin/bash --create-home ${USER_NAME} && \
+    echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/${USER_NAME} && \
+    chmod 0440 /etc/sudoers.d/${USER_NAME}
+
+# Install pipx and common Python dev tools
+RUN pip install --no-cache-dir pipx && \
+    pipx ensurepath
+
+# install uv
+ARG UV_VERSION="0.10.9"
+RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh \
+    | UV_INSTALL_DIR=/usr/local/bin sh
+
+ENV PYTHONUNBUFFERED=1
+ENV APP_NAME=DEPSIGHT
+ENV DEPSIGHT_ENV=development
+
+EXPOSE 8000
+
+USER ${USER_NAME}

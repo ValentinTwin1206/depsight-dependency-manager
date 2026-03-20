@@ -49,13 +49,29 @@ Per-IDE configuration lives under the `customizations` key in `devcontainer.json
 
 ## DevContainer Components
 
-### `devcontainer.json`
+### Project Structure
 
-`devcontainer.json` is the central configuration file. It tells the IDE how to build the container, what to install, and how to configure the workspace. Here is the full Depsight configuration with the most important entries explained:
+A DevContainer is configured through a `.devcontainer/` folder at the root of the repository. The **minimum required file** is `devcontainer.json`. A `Dockerfile` is optional but recommended when the project needs system-level customizations beyond what a pre-built base image provides.
 
-#### Build Configuration
+For complex post-creation routines such as configuring git hooks, installing additional tools, or running conditional setup logic, extracting the [`"postCreateCommand"`](#lifecycle-commands) into a dedicated shell script is recommended over embedding a long one-liner in `devcontainer.json`.
 
-The `build` section points to the Dockerfile and passes build arguments. `${localEnv:...}` allows developers to override values via host environment variables, with defaults after the colon:
+```
+.devcontainer/
+├── devcontainer.json
+├── Dockerfile
+└── postCreateCommand.sh
+```
+
+!!! info "Other Lifecycle Hooks"
+    `postStartCommand` runs on every container start. `postAttachCommand` runs each time the IDE attaches to the running container.
+
+---
+
+### DevContainer Configuration
+
+The `devcontainer.json` is the central configuration file. it instructs the IDE how to build the container image, which extensions to install, which ports to forward, and which environment variables and lifecycle commands to apply.
+
+The `build` section points to the `Dockerfile` and passes build arguments. `${localEnv:PYTHON_VERSION:3.12}` reads `PYTHON_VERSION` from the host machine's environment — useful when a developer wants to override the version without editing the file. The value after the colon is the fallback default when the variable is not set. `containerEnv` injects environment variables into the running container, making them available to every process. `forwardPorts` maps container ports to the host so they can be accessed from a browser or tool on the developer's machine. `workspaceFolder` sets the path inside the container where the project is mounted; when omitted, the Dev Containers extension defaults to `/workspaces/<repo-name>`. The `postCreateCommand` runs with this folder as the working directory immediately after the project has been mounted:
 
 ```json
 {
@@ -67,63 +83,38 @@ The `build` section points to the Dockerfile and passes build arguments. `${loca
             "PYTHON_VERSION": "${localEnv:PYTHON_VERSION:3.12}",
             "UV_VERSION": "${localEnv:UV_VERSION:0.10.9}"
         }
-    }
-}
-```
-
-#### Environment Variables
-
-`containerEnv` sets environment variables available inside the container. Depsight uses them to identify the application name and to enable development mode:
-
-```json
-{
+    },
     "containerEnv": {
         "APP_NAME": "DEPSIGHT",
         "DEPSIGHT_ENV": "development"
-    }
-}
-```
-
-#### Port Forwarding
-
-`forwardPorts` exposes container ports to the host. Depsight forwards port 8000 for the MkDocs development server:
-
-```json
-{
+    },
     "forwardPorts": [8000],
     "portsAttributes": {
         "8000": {
             "label": "MkDocs Dev Server",
             "onAutoForward": "notify"
         }
-    }
+    },
+    "postCreateCommand": "uv sync --all-groups",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}" //optional
 }
 ```
 
 #### Lifecycle Commands
 
-`postCreateCommand` runs once after the container is created. Depsight uses it to install all dependencies automatically:
+The `"postCreateCommand"` runs once after the container is created and the project has been mounted into the `"workspaceFolder"`. It is typically used to install project dependencies via `uv sync --all-groups`, `npm install` etc.
 
-```json
-{
-    "postCreateCommand": "uv sync --all-groups",
-    "remoteUser": "vscode"
-}
-```
-
-Other lifecycle hooks include `postStartCommand` (runs on every container start) and `postAttachCommand` (runs each time the IDE attaches).
+Installing dependencies inside the `Dockerfile` instead would not work, since the `Dockerfile` builds the image before the project is mounted. When the Dev Containers extension mounts the workspace into `"workspaceFolder"`, it overlays that path in the container filesystem, hiding anything that was written there during the image build. Running the install in `"postCreateCommand"` ensures it happens after the mount.
 
 ---
 
-### `Dockerfile`
+### Container Image
 
-#### Role of the Dockerfile
-
-The `Dockerfile` defines the content of the container image like the pre-installed system tools, users, and their permissions, while `devcontainer.json` controls how the IDE integrates with that image and which lifecycle commands to run.
+The `Dockerfile` defines the content of the container image — the pre-installed system tools, users, and their permissions — while `devcontainer.json` controls how the IDE integrates with that image and which lifecycle commands to run.
 
 When `devcontainer.json` includes a `build` block, the IDE builds the image from the Dockerfile before starting the container. Without one, DevContainers use a pre-built image directly.
 
-The `Dockerfile` of the Depsight's DevContainer is intentionally minimal. It extends the [Microsoft DevContainer base image](#microsofts-devcontainer-base-images), only installs `uv` and exposes certain environment variables.
+Depsight's Dockerfile is intentionally minimal — it extends the [Microsoft DevContainer base image](#microsofts-devcontainer-base-images) and only adds what it doesn't already include:
 
 ```dockerfile
 ARG PYTHON_VERSION="3.12"
@@ -142,7 +133,7 @@ EXPOSE 8000
 
 ---
 
-#### Microsoft's DevContainer Base Images
+### Microsoft's DevContainer Base Images
 
 Microsoft publishes **purpose-built** base images at [`mcr.microsoft.com/devcontainers`](https://mcr.microsoft.com/en-us/catalog?search=devcontainers) for most common languages and stacks such as *Python*, *JavaScript*, *Rust*, etc. Unlike regular container images, these DevContainer images are built for development:
 
@@ -153,28 +144,17 @@ Microsoft publishes **purpose-built** base images at [`mcr.microsoft.com/devcont
 | Preinstalled tools               | Minimal                          | Extensive        |
 | Python tooling                   | `pip` only                       | `pip`, `pipx`, common dev tools            |
 | Shell                            | `sh`, `bash` | `sh`, `bash`, `zsh` |
-| VS Code integration              | Requires manually creating a non-root user and setting `remoteUser` | Works out of the box with pre-configured `vscode` user |
-| VS Code Server                   | Permission issues with the default `root` user; requires manual non-root setup | Works seamlessly; `vscode` user is the default |
-| Workspace setup                  | `/workspaces` folder owned by `root` | `/workspaces`  owned by `vscode` — no `USER` directive needed |
+| VS Code Server                   | Requires manually creating a non-root user and using `USER` syntax   | Works out of the box; `vscode` is the default user |
 
 ---
 
 ## CI/CD Integration
 
-One of the biggest advantages of DevContainers is that the same container image used for local development can also be used in CI. This eliminates the classic problem of environment drift — builds that pass locally but fail in the pipeline because of a different OS, Python version, or missing system library.
+The same container image used for local development can be used directly in CI, eliminating environment drift. Environment drift is the problem where builds pass locally but fail in the pipeline due to a different OS, Python version, or missing system library.
 
-The [`devcontainers/ci`](https://github.com/devcontainers/ci) GitHub Action makes this straightforward. It reads the project's `devcontainer.json`, builds the container, and runs commands inside it:
+### GitHub Actions
 
-```yaml
-- name: Run CI inside DevContainer
-  uses: devcontainers/ci@v0.3
-  with:
-    configFile: .devcontainer/devcontainer.json
-    runCmd: |
-      # any commands here run inside the same container as local development
-```
-
-Depsight uses exactly this approach. The key step in `.github/workflows/build.yml` builds the DevContainer and runs linting, type checking, tests, and the wheel build all inside it:
+GitHub Actions has "native" DevContainer support through the official [`devcontainers/ci`](https://github.com/devcontainers/ci) action, maintained by the same project behind the DevContainer specification. It reads the project's `devcontainer.json`, builds the container, and runs commands inside it:
 
 ```yaml
 - name: Lint, test & build wheel
@@ -192,4 +172,37 @@ Depsight uses exactly this approach. The key step in `.github/workflows/build.ym
       uv build                                # Build wheel
 ```
 
-`PYTHON_VERSION` and `UV_VERSION` are passed as Docker build arguments, so CI uses exactly the same Python and uv versions as the local DevContainer.
+### GitLab CI
+
+GitLab has no native DevContainer support. The [`@devcontainers/cli`](https://github.com/devcontainers/cli) npm package can replicate the behaviour, but it requires ***Docker-in-Docker (DinD)*** (`docker:dind`). The setup could be a nightmare since runner privileges, TLS settings, and socket access all vary across GitLab installations and can produce hard-to-diagnose failures.
+
+A more robust alternative is to split the work into two explicit pipeline stages. One job builds and pushes the DevContainer image, and a second job pulls and uses it directly:
+
+```yaml
+stages:
+  - build
+  - test
+
+build-devcontainer:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker build -f .devcontainer/Dockerfile -t $CI_REGISTRY_IMAGE/devcontainer:$CI_COMMIT_SHORT_SHA .
+    - docker push $CI_REGISTRY_IMAGE/devcontainer:$CI_COMMIT_SHORT_SHA
+
+test:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/devcontainer:$CI_COMMIT_SHORT_SHA
+  script:
+    - source .venv/bin/activate
+    - depsight --help
+    - ruff check src/ tests/
+    - mypy src/
+    - python -m pytest tests/ -v --tb=short
+    - uv build
+```
