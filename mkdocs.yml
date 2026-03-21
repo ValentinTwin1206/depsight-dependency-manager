@@ -32,9 +32,8 @@ extra_css:
 nav:
   - Development:
       - Development Environment:
+          - Project Setup: development/environment/project-setup.md
           - DevContainers: development/environment/devcontainer.md
-          - uv: development/environment/uv.md
-          - Project Configuration: development/environment/project-configuration.md
       - Architecture & Patterns: development/architecture-and-patterns.md
       - CI/CD & Packaging: development/ci-cd-and-packaging.md
   - Instructions:
