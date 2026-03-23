@@ -1,8 +1,10 @@
-# DevContainers
+# Development Environment
 
 ## Overview
 
-A [DevContainer](https://containers.dev/) is a modern approach to virtualizing an entire development environment inside a Linux container. Instead of documenting setup steps in a README and hoping every contributor follows them correctly, a DevContainer defines and provisions the full environment as code automatically.
+It is common practice to use virtual environment tools such as `venv`, `pipenv`, or `virtualenv` when running Python projects locally. They isolate project packages from the system Python and from other projects, keeping dependency versions consistent and preventing conflicts. For many projects that level of isolation is sufficient.
+
+Depsight goes further by integrating [DevContainers](https://containers.dev/), a modern approach to virtualizing an entire development environment inside a Linux container. Instead of documenting setup steps in a README and hoping every contributor follows them correctly, a DevContainer defines and provisions the full environment as code automatically.
 
 ### Beyond Traditional Virtualization Techniques
 

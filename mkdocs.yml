@@ -33,9 +33,9 @@ extra_css:
 
 nav:
   - Technical Documentation:
-      - Project Overview:
-          - Project Toolchain: technical-documentation/project-overview/project-toolchain.md
-          - Development Environment: technical-documentation/project-overview/dev-environment.md
+      - Development:
+          - Project Toolchain: technical-documentation/development/project-overview.md
+          - Environment: technical-documentation/development/dev-environment.md
       - Architecture: 
           - Command-line Interface: technical-documentation/architecture/command-line-interface.md
           - Design Patterns: technical-documentation/architecture/design-patterns.md
