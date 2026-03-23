@@ -34,10 +34,10 @@ extra_css:
 nav:
   - Technical Documentation:
       - Development:
-          - Project Toolchain: technical-documentation/development/project-overview.md
-          - Environment: technical-documentation/development/dev-environment.md
+          - Project Overview: technical-documentation/development/project-overview.md
+          - Development Environment: technical-documentation/development/dev-environment.md
       - Architecture: 
-          - Command-line Interface: technical-documentation/architecture/command-line-interface.md
+          - TUI Applications: technical-documentation/architecture/tui-applications.md
           - Design Patterns: technical-documentation/architecture/design-patterns.md
       - CI/CD & Packaging: 
           - Packaging: technical-documentation/ci-cd-and-packaging/packaging.md

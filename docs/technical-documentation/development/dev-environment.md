@@ -47,6 +47,12 @@ Per-IDE configuration lives under the `customizations` key in `devcontainer.json
 }
 ```
 
+!!! info "Running a Python `venv` inside the DevContainer by default"
+
+    When the DevContainer starts, `uv sync --all-groups` runs as the `postCreateCommand` and creates a `.venv/` directory with all project dependencies. During this step, `uv` reads the project name from `pyproject.toml` (`name = "depsight"`) and writes it into `.venv/pyvenv.cfg` as `prompt = depsight`. That prompt value is what determines the `(depsight)` prefix in the shell.
+
+    The actual activation happens through the `ms-python.python` extension listed under `customizations`. Its default setting `python.terminal.activateEnvironment` is `true`, which means it auto-detects the `.venv/` directory and injects `source .venv/bin/activate` into every new integrated terminal. So `uv sync` creates the named virtual environment, and the Python extension activates it — no manual step is needed.
+
 ---
 
 ## DevContainer Components
