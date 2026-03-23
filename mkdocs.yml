@@ -33,16 +33,13 @@ extra_css:
 
 nav:
   - Technical Documentation:
-      - Development:
+      - Architecture & Development:
           - Project Overview: technical-documentation/development/project-overview.md
           - Development Environment: technical-documentation/development/dev-environment.md
-      - Architecture: 
-          - TUI Applications: technical-documentation/architecture/tui-applications.md
-          - Design Patterns: technical-documentation/architecture/design-patterns.md
-      - CI/CD & Packaging: 
-          - Packaging: technical-documentation/ci-cd-and-packaging/packaging.md
+          - CLI Architecture: technical-documentation/development/cli-architecture.md
+      - Packaging & Distribution: 
+          - Python Wheels: technical-documentation/ci-cd-and-packaging/packaging.md
           - Containerization: technical-documentation/ci-cd-and-packaging/containerization.md
-          - GitHub Actions: technical-documentation/ci-cd-and-packaging/github-actions.md
   - Instructions:
       - Getting Started:
           - Getting Started: instructions/getting-started/getting-started.md

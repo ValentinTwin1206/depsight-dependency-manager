@@ -6,28 +6,39 @@ from typing import Callable
 from rich.console import Console
 
 # own imports
+from depsight.commands.scan import scan_handler
 from depsight.core.plugins.factory import PluginFactory
 from depsight.utils.constants import SUPPORTED_PLUGINS
 from depsight.utils.logger import get_logger
 
+# Command registry: maps command names to handler callables
+COMMAND_HANDLERS: dict[str, Callable] = {
+    "scan": scan_handler,
+}
 
-def run_handler(command: str, handler: Callable, options: dict):
-    """Resolve a plugin by name and execute the requested command.
 
-    Uses :class:`~depsight.core.factory.PluginFactory` to instantiate the plugin
-    from the registry and dispatches the given `command` via the provided
-    `handler` callable.
+def run_handler(command: str, options: dict):
+    """Look up the command handler by name, resolve the plugin, and dispatch.
+
+    Uses the :data:`COMMAND_HANDLERS` registry to find the handler for
+    *command* and :class:`~depsight.core.factory.PluginFactory` to instantiate
+    the plugin from the plugin registry.
 
     Parameters
     ----------
     command - The action to perform (e.g. `"scan"`).
 
-    handler - A callable that implements the command logic.
-
     options - A dict of CLI options (e.g. `plugin_name`, `project_dir`, `verbose`).
     """
 
     console = Console()
+
+    # Look up handler
+    handler = COMMAND_HANDLERS.get(command)
+    if handler is None:
+        console.print(f"[bold red]Unknown command '{command}'. "
+                       f"Available: {', '.join(COMMAND_HANDLERS)}[/bold red]")
+        return 1
 
     # Destructure options
     plugin_name: str = options["plugin_name"]
