@@ -22,7 +22,7 @@ uv tool install depsight
 docker pull <your-dockerhub-user>/depsight
 ```
 
-s### Getting Started
+### Getting Started
 
 Read the docs.
 
