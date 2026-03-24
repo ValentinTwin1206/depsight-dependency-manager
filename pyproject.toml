@@ -1,6 +1,6 @@
 [project]
 name = "depsight"
-version = "0.1.0"
+version = "0.3.0"
 description = "A modular dependency analysis framework"
 readme = "README.md"
 license = "MIT"

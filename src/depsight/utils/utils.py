@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib
 import importlib.metadata
+import os
 
 from pathlib import Path
 
@@ -23,6 +24,27 @@ def resolve_user_dir(app_name: str, *, dev_mode: bool) -> Path:
     if dev_mode:
         return Path(__file__).resolve().parents[3] / f".{app_name}"
     return Path.home() / f".{app_name}"
+
+
+def resolve_output_dir(default: Path) -> Path:
+    """Return the output directory for exported files.
+
+    Uses the `DEPSIGHT_OUTPUT_DIR` environment variable when set,
+    otherwise falls back to *default*.
+
+    Parameters
+    ----------
+    default - The fallback directory derived from DEPSIGHT_HOME.
+
+    Returns
+    -------
+    Path
+        The resolved output directory path.
+    """
+    env_value = os.getenv("DEPSIGHT_OUTPUT_DIR")
+    if env_value:
+        return Path(env_value)
+    return default
 
 
 def discover_plugins(app_name: str) -> dict:

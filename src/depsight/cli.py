@@ -26,6 +26,7 @@ click.rich_click.COMMAND_GROUPS = {
 
 
 @click.group()
+@click.version_option(__version__, "--version", "-V", prog_name="depsight")
 def main():
     """A modern TUI framework for scanning local project dependencies."""
     pass

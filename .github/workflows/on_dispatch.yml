@@ -27,7 +27,19 @@ on:
         type: boolean
 
 jobs:
+  parse-version:
+    runs-on: ubuntu-latest
+    outputs:
+      depsight_version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: |
+          version=$(grep '^version' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
   call-build:
+    needs: parse-version
     uses: ./.github/workflows/build.yml
     with:
       is_release: false
