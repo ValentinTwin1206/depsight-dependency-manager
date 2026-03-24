@@ -88,7 +88,9 @@ build-backend = "hatchling.build"
 
 ### Publishing to PyPI
 
-[PyPI](https://pypi.org) (the Python Package Index) is the official package registry for Python. It is the registry that `pip install depsight` and `uv tool install depsight` query by default. Every package on PyPI is identified by its `"name"` and `"version"` as declared in `pyproject.toml`. Once uploaded, the wheel is immediately available at `https://pypi.org/project/depsight/` and installable by anyone:
+[PyPI](https://pypi.org) (the Python Package Index) is the official package registry for Python. It is the registry that `pip install depsight` and `uv tool install depsight` query by default. Every package on PyPI is identified by its `"name"` and `"version"` as declared in `pyproject.toml`. Once uploaded, the wheel is immediately available at `https://pypi.org/project/depsight/` and installable by anyone.
+
+![Depsight on PyPI](../../images/depsight_pypi.png)
 
 !!! info "PyPI Account and API Token"
     Uploading a package requires an account and an API token. The token is scoped either to the entire account or to a single project, and is passed as a secret during publishing.
