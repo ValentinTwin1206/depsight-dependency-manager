@@ -1,0 +1,142 @@
+name: CI (DevContainer Build & Test)
+
+on:
+  workflow_call:
+    inputs:
+      is_release:
+        description: "Whether to publish the wheel to PyPI and push the Docker image"
+        required: true
+        type: boolean
+      uv_version:
+        description: "uv version to install in the DevContainer (e.g. 0.10.9)"
+        required: true
+        type: string
+      python_version:
+        description: "Underlying python version (e.g. 3.12)"
+        required: true
+        type: string
+      depsight_version:
+        description: "Depsight version (e.g. 1.0.0)"
+        required: true
+        type: string
+      upload_artifact:
+        description: "Upload the wheel as a workflow artifact"
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      PYPI_TOKEN:
+        description: "PyPI API token for publishing"
+        required: false
+      DOCKER_PAT:
+        description: "Docker Hub personal access token"
+        required: false
+
+env:
+  PYTHON_VERSION: ${{ inputs.python_version }}
+  UV_VERSION: ${{ inputs.uv_version }}
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify version matches pyproject.toml
+        env:
+          EXPECTED_VERSION: ${{ inputs.depsight_version }}
+        run: |
+          set -euo pipefail
+
+          echo "::group::Version check"
+
+          toml_version=$(grep '^version' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "Expected version: '$EXPECTED_VERSION'"
+          echo "pyproject.toml version: '$toml_version'"
+
+          if [[ "$EXPECTED_VERSION" != "$toml_version" ]]; then
+            echo "::error::Version '$EXPECTED_VERSION' does not match pyproject.toml version '$toml_version'"
+            exit 1
+          fi
+
+          echo "Version match ('$EXPECTED_VERSION')"
+
+          echo "::endgroup::"
+
+      - name: Lint, test & build wheel
+        uses: devcontainers/ci@v0.3
+        with:
+          configFile: .devcontainer/devcontainer.json
+          runCmd: |
+
+            set -e
+
+            echo "::group::Environment"
+            python --version
+            pip --version
+            which python
+            echo "::endgroup::"
+
+            source .venv/bin/activate
+
+            echo "::group::CLI health check"
+            depsight --help
+            echo "::endgroup::"
+
+            echo "::group::Ruff linting"
+            ruff check src/ tests/
+            echo "::endgroup::"
+
+            echo "::group::Type checking"
+            mypy src/
+            echo "::endgroup::"
+
+            echo "::group::Pytest"
+            python -m pytest tests/ -v --tb=short
+            echo "::endgroup::"
+
+            echo "::group::Build wheel"
+            uv build
+            ls -lah dist
+            echo "::endgroup::"
+
+      - name: Provide wheel as workflow artifact
+        if: ${{ inputs.upload_artifact }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: depsight-wheel
+          path: dist/*.whl
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload wheel to PyPI
+        if: ${{ inputs.is_release }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Set up Docker Buildx
+        if: ${{ inputs.is_release }}
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        if: ${{ inputs.is_release }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PAT }}
+
+      - name: Build and push Docker image
+        if: ${{ inputs.is_release }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            PYTHON_VERSION=${{ inputs.python_version }}
+            UV_VERSION=${{ inputs.uv_version }}
+          tags: |
+            ${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}
+            ${{ vars.DOCKER_REPOSITORY }}:latest

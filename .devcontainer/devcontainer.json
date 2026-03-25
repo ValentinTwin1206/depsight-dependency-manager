@@ -1,0 +1,54 @@
+{
+    "name": "Depsight DevContainer",
+    "build": {
+        "context": "..",
+        "dockerfile": "Dockerfile",
+        "args": {
+            "PYTHON_VERSION": "${localEnv:PYTHON_VERSION:3.12}",
+            "UV_VERSION": "${localEnv:UV_VERSION:0.10.9}"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+            "moby": false
+        }
+    },
+    "customizations": {
+        "jetbrains": {
+            "plugins": [
+                "com.intellij.python",
+                "com.jetbrains.plugins.ini"
+            ]
+        },
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.debugpy",
+                "charliermarsh.ruff",
+                "ms-azuretools.vscode-docker",
+                "tamasfe.even-better-toml",
+                "eamodio.gitlens",
+                "GitHub.copilot",
+                "github.vscode-github-actions",
+                "redhat.vscode-yaml",
+                "mechatroner.rainbow-csv"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python"
+            }
+        }
+    },
+    "containerEnv": {
+        "APP_NAME": "DEPSIGHT",
+        "DEPSIGHT_ENV": "development"
+    },
+    "forwardPorts": [8000],
+    "portsAttributes": {
+        "8000": {
+            "label": "MkDocs Dev Server",
+            "onAutoForward": "notify"
+        }
+    },
+    "postCreateCommand": "uv sync --all-groups"
+}

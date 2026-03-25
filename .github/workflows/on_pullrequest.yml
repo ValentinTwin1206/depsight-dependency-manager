@@ -1,0 +1,30 @@
+name: On Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+
+jobs:
+  parse-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: get_version
+        run: |
+          version=$(grep '^version' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  call-build:
+    needs: parse-version
+    uses: ./.github/workflows/build.yml
+    with:
+      is_release: false
+      uv_version: "0.10.9"
+      python_version: "3.12"
+      depsight_version: ${{ needs.parse-version.outputs.version }}

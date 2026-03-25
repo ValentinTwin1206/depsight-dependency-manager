@@ -1,0 +1,42 @@
+name: On Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  verify-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      depsight_version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          # Verify PEP 440 compliance
+          if ! echo "$TAG" | grep -qP '^(\d+!)?(\d+)(\.(\d+))*(\.(a|b|rc)\d+)?(\.post\d+)?(\.dev\d+)?$'; then
+            echo "::error::Tag '$TAG' is not PEP 440 compliant"
+            exit 1
+          fi
+
+          echo "Tag '$TAG' is PEP 440 compliant"
+          echo "version=$TAG" >> "$GITHUB_OUTPUT"
+
+  call-build:
+    needs: verify-tag
+    uses: ./.github/workflows/build.yml
+    with:
+      is_release: true
+      uv_version: "0.10.9"
+      python_version: "3.12"
+      depsight_version: ${{ github.event.release.tag_name }}
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      DOCKER_PAT: ${{ secrets.DOCKER_PAT }}

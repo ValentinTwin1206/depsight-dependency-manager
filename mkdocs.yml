@@ -1,0 +1,50 @@
+site_name: Depsight - Dependency Analysis Framework
+site_description: A modular dependency analysis framework for local workspaces
+
+theme:
+  name: material
+  palette:
+    scheme: default
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - search
+  - mermaid2
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Technical Documentation:
+      - Architecture & Development:
+          - Project Overview: technical-documentation/development/project-overview.md
+          - Development Environment: technical-documentation/development/dev-environment.md
+          - CLI Architecture: technical-documentation/development/cli-architecture.md
+      - Integration & Deployment: 
+          - Packaging: technical-documentation/integration_and_deployment/packaging.md
+          - Containerization: technical-documentation/integration_and_deployment/containerization.md
+          - CI/CD: technical-documentation/integration_and_deployment/ci_cd.md
+  - Instructions:
+      - Getting Started:
+          - Getting Started: instructions/getting-started/getting-started.md
+      - Tasks:
+          - "Task 1: Write an NPM Plugin": instructions/tasks/task-1-write-a-npm-plugin.md
+          - "Task 2: Package and Publish Your Plugin": instructions/tasks/task-2-package-and-publish-your-plugin.md
+          - "Task 3: Scan Dependencies": instructions/tasks/task-3-scan-dependencies.md

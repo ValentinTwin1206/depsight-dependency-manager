@@ -1,0 +1,32 @@
+.full-width {
+    width: 100%;
+}
+
+.md-typeset__scrollwrap:has(> .md-typeset__table > table.full-width),
+.md-typeset__table:has(> table.full-width) {
+    width: 100%;
+    display: block;
+}
+
+.code-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.code-columns > * {
+    margin: 0;
+    min-width: 0;
+}
+
+.tag-green {
+    display: inline-block;
+    padding: 0 0.5em;
+    border-radius: 0.25em;
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background-color: #d4edda;
+    color: #1a6630;
+}
