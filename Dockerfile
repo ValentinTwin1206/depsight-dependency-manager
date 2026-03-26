@@ -1,11 +1,11 @@
 # # # # # # # #
 # BUILD STAGE
 # # # # # # # #
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION="3.12"
 FROM python:${PYTHON_VERSION}-slim AS builder
 
 # Install uv via official installer script
-ARG UV_VERSION=0.10.9
+ARG UV_VERSION="0.11.1"
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
@@ -28,7 +28,7 @@ RUN uv sync --frozen
 # # # # # # # #
 # FINAL STAGE
 # # # # # # # #
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION="3.12"
 FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /depsight

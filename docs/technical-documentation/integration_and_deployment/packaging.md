@@ -32,16 +32,16 @@ The `entry_points.txt` file registers the CLI command and the plugin system. See
 
 ### Build System
 
-#### Setuptools
+#### uv
 
-[PEP 517](https://peps.python.org/pep-0517/) defines a standard interface between build frontends and build backends. A build frontend is the tool the developer runs — such as `uv build` or `python -m build` — and is responsible for orchestrating the build process. A build backend is the library that does the actual work of compiling metadata and assembling the wheel; it is declared in the `[build-system]` table in `pyproject.toml` and invoked by the frontend.
+According to [Python Project Configuration Nowadays](../development/project-overview.md#python-project-configuration-nowadays), [PEP 517](https://peps.python.org/pep-0517/) generally defined a standard interface between build frontends and build backends. A build frontend is the tool the developer runs (e.g `uv build`, `python -m build`) and is responsible for orchestrating the build process. A build backend is the library that does the actual work of compiling metadata and assembling the wheel; it is declared in the `[build-system]` table in `pyproject.toml` and invoked by the frontend. 
 
-Depsight uses `setuptools`, the most established Python build backend with the widest tooling compatibility:
+The latest version of Depsight uses `uv` as its build backend, which has provided a stable, PEP 517-compliant build backend since version `v0.7.19`. In the current `pyproject.toml` configuration, that backend is declared through the separate `uv_build` package. `uv_build` is shipped with the installation of `uv`, but it is not user-facing; `uv build` remains the command intended for normal use:
 
 ```toml
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.11.1,<0.12"]
+build-backend = "uv_build"
 ```
 
 Running the build produces two output files in `dist/`:
@@ -51,7 +51,7 @@ Running the build produces two output files in `dist/`:
     uv build
     ```
 
-=== "pip"
+=== "build"
     ```bash
     python -m build
     ```
@@ -60,23 +60,35 @@ This will generate a `*.whl` (binary distribution) and a `*.tar.gz` (source dist
 
 ```
 dist/
-├── depsight-0.1.0-py3-none-any.whl
-└── depsight-0.1.0.tar.gz
+├── depsight-1.0.0-py3-none-any.whl
+└── depsight-1.0.0.tar.gz
 ```
 
 The generated `.whl` can be directly used to install Depsight locally:
 
 === "pip"
     ```bash
-    pip install dist/depsight-0.1.0-py3-none-any.whl
+    pip install dist/depsight-1.0.0-py3-none-any.whl
     ```
 
 === "uv"
     ```bash
-    uv pip install dist/depsight-0.1.0-py3-none-any.whl
+    uv pip install dist/depsight-1.0.0-py3-none-any.whl
     ```
 
 #### Alternatives
+
+##### Setuptools
+
+**[Setuptools](https://setuptools.pypa.io/)** is probably the most widely adopted Python build backend. It has the broadest ecosystem compatibility, works well with older packaging workflows, and remains a sensible default when maximum tooling interoperability matters more than using uv's native backend. Older versions of Depsight used `setuptools.build_meta` before the project switched to uv's build backend.
+
+```toml
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+```
+
+##### Hatchling
 
 **[Hatchling](https://hatch.pypa.io/latest/backend/)** is a modern alternative that reads all metadata directly from `pyproject.toml` with no additional configuration files. It is faster, stricter about standards compliance, and produces reproducible builds by default. Switching is a one-line change:
 

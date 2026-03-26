@@ -60,9 +60,9 @@ on:
           - "3.12"
           - "3.13"
       uv_version:
-        description: "uv version to install in the DevContainer (e.g. 0.10.9)"
+        description: "uv version to install in the DevContainer (e.g. 0.11.1)"
         required: false
-        default: "0.10.9"
+        default: "0.11.1"
         type: string
       upload_artifact:
         description: "Upload the wheel as a workflow artifact"

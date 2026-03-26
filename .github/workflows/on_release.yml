@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       depsight_version: ${{ steps.check.outputs.version }}
+      uv_version: ${{ steps.versions.outputs.uv_version }}
+      python_version: ${{ steps.versions.outputs.python_version }}
     steps:
       - uses: actions/checkout@v4
       - id: check
@@ -29,13 +31,19 @@ jobs:
           echo "Tag '$TAG' is PEP 440 compliant"
           echo "version=$TAG" >> "$GITHUB_OUTPUT"
 
+      - id: versions
+        run: |
+          source versions.env
+          echo "uv_version=$UV_VERSION" >> "$GITHUB_OUTPUT"
+          echo "python_version=$PYTHON_VERSION" >> "$GITHUB_OUTPUT"
+
   call-build:
     needs: verify-tag
     uses: ./.github/workflows/build.yml
     with:
       is_release: true
-      uv_version: "0.10.9"
-      python_version: "3.12"
+      uv_version: ${{ needs.verify-tag.outputs.uv_version }}
+      python_version: ${{ needs.verify-tag.outputs.python_version }}
       depsight_version: ${{ github.event.release.tag_name }}
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}

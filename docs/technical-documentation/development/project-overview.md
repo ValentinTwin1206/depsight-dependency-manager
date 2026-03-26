@@ -141,25 +141,50 @@ The `[project]` table consolidates everything that used to live across `setup.py
 
 === "`pyproject.toml`"
     ```toml
-    # replaces: setup.py / setup.cfg [metadata] + [options]
     [project]
     name = "depsight"
-    version = "0.1.0"
+    version = "1.0.0"
     description = "A modular dependency analysis framework"
-    dependencies = [        # replaces: install_requires + requirements.txt
+    readme = "README.md"
+    license = "MIT"
+    requires-python = ">=3.12"
+    authors = [
+        { name = "Depsight Contributors" },
+    ]
+    classifiers = [
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Topic :: Software Development :: Build Tools",
+    ]
+    dependencies = [
         "click>=8.1.7",
         "rich>=13.7.0",
         "rich-click>=1.7.0",
+        "textual>=1.0.0",
     ]
 
-    # replaces: setup.py (the build entry point)
-    [build-system]
-    requires = ["setuptools>=61.0"]
-    build-backend = "setuptools.build_meta"
+    [project.scripts]
+    depsight = "depsight.cli:main"
 
-    # replaces: requirements-dev.txt, requirements-docs.txt
+    [project.urls]
+    Homepage = "https://valentintwin1206.github.io/depsight-dependency-manager/"
+    Repository = "https://github.com/ValentinTwin1206/depsight-dependency-manager"
+    Issues = "https://github.com/ValentinTwin1206/depsight-dependency-manager/issues"
+
+    [project.entry-points."depsight.plugins"]
+    uv = "depsight.core.plugins.uv.uv:UVPlugin"
+    vsce = "depsight.core.plugins.vsce.vsce:VSCEPlugin"
+
+    [build-system]
+    requires = ["uv_build>=0.11.1,<0.12"]
+    build-backend = "uv_build"
+
     [dependency-groups]
     dev = [
+        "build>=1.4.2",
         "mypy>=1.10",
         "pytest>=8.0",
         "ruff>=0.4",
@@ -174,24 +199,17 @@ The `[project]` table consolidates everything that used to live across `setup.py
     [tool.pytest.ini_options]
     testpaths = ["tests"]
     pythonpath = ["src"]
-
-    # replaces: .flake8 / tox.ini [flake8]
-    [tool.ruff]
-    line-length = 120
-
-    [tool.ruff.lint]
-    select = ["E", "F", "I"]
-    ignore = ["E501"]
-
-    # replaces: mypy.ini
-    [tool.mypy]
-    strict = true
-    ignore_missing_imports = true
     ```
 
 ---
 
 ## Development Tooling Stack
+
+### Build Management
+
+Build management tools turn Python projects into distributable artifacts such as source distributions and wheels. In modern Python packaging, they separate the user-facing build command from the backend that actually assembles package metadata and archive contents. Popular tools in this space include `setuptools`, `hatchling`, `poetry-core`, `flit_core`, and `uv_build`.
+
+Depsight uses [**uv**](https://docs.astral.sh/uv/) as its build tooling; see the dedicated [Build System](../integration_and_deployment/packaging.md#uv) section for the concrete configuration and build workflow.
 
 ### Dependency Management
 
