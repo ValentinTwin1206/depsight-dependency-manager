@@ -92,7 +92,7 @@ The `build` section points to the `Dockerfile` and passes build arguments. `${lo
         "dockerfile": "Dockerfile",
         "args": {
             "PYTHON_VERSION": "${localEnv:PYTHON_VERSION:3.12}",
-            "UV_VERSION": "${localEnv:UV_VERSION:0.10.9}"
+            "UV_VERSION": "${localEnv:UV_VERSION:0.11.1}"
         }
     },
     "features": {
@@ -143,7 +143,7 @@ Depsight's Dockerfile is intentionally minimal — it extends the [Microsoft Dev
 ARG PYTHON_VERSION="3.12"
 FROM mcr.microsoft.com/devcontainers/python:${PYTHON_VERSION}
 
-ARG UV_VERSION="0.10.9"
+ARG UV_VERSION="0.11.1"
 RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh \
     | UV_INSTALL_DIR=/usr/local/bin sh
 

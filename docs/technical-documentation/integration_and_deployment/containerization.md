@@ -30,7 +30,7 @@ The `Dockerfile` is composed of a small set of instructions that together define
 | Argument           | Default     | Purpose                              |
 |--------------------|-------------|--------------------------------------|
 | `PYTHON_VERSION`   | `3.12`      | Base Python image tag                |
-| `UV_VERSION`       | `0.10.9`    | `uv` installer version              |
+| `UV_VERSION`       | `0.11.1`    | `uv` installer version              |
 | `USER_ID`          | `1000`      | UID for the non-root runtime user    |
 | `USER_NAME`        | `depsight`  | Username for the non-root runtime user |
 
@@ -54,6 +54,7 @@ A [multi-stage build](https://docs.docker.com/build/building/multi-stage/) split
 
 Depsight uses two stages. The **builder** stage starts from `python:3.12-slim`, installs `uv` and all project dependencies, and then installs `depsight` itself. The **final** stage starts from a fresh `python:3.12-slim` image and copies only the runtime artifacts (the `uv` binaries, the virtual environment, and the plugin source) from the builder. This keeps build-time dependencies such as `curl` and the full source tree out of the shipped image.
 
+<div style="zoom: 1.6;">
 ```mermaid
 flowchart LR
   subgraph Builder["Builder Stage"]
@@ -74,6 +75,7 @@ flowchart LR
   F1 --> F2 --> F3 --> F4
   B4 -. runtime artifacts .-> F2
 ```
+</div>
 
 ##### Builder Stage
 
@@ -83,7 +85,7 @@ The builder stage starts from `python:3.12-slim`, installs [`uv`](https://docs.a
 ARG PYTHON_VERSION=3.12
 FROM python:${PYTHON_VERSION}-slim AS builder
 
-ARG UV_VERSION=0.10.9
+ARG UV_VERSION=0.11.1
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \

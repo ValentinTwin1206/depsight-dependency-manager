@@ -41,7 +41,7 @@ on:
 
 ### On Dispatch
 
-The `on_dispatch.yml` workflow is triggered manually from the GitHub Actions UI. It exposes several inputs that let the operator choose the Python version, the `uv` version, and whether the wheel should be uploaded as a downloadable workflow artifact. Like the pull request workflow, it calls `build.yml` with `is_release: false`, so nothing is published to PyPI or Docker Hub. This workflow is useful for testing a specific configuration or producing a pre-release wheel for local validation.
+The `on_dispatch.yml` workflow is triggered manually from the GitHub Actions UI. It exposes inputs that let the operator optionally override the Python version and the `uv` version. The Python version defaults to the value in `.python-version` if left empty. Like the pull request workflow, it calls `build.yml` with `is_release: false`, so nothing is published to PyPI or Docker Hub. This workflow is useful for testing a specific configuration or producing a pre-release wheel for local validation.
 
 ```yaml
 on:
@@ -52,17 +52,14 @@ on:
         required: true
         type: string
       python_version:
-        description: "Python version used for the build"
+        description: "Python version override (leave empty to use .python-version)"
         required: false
-        default: "3.12"
-        type: choice
-        options:
-          - "3.12"
-          - "3.13"
+        default: ""
+        type: string
       uv_version:
-        description: "uv version to install in the DevContainer (e.g. 0.10.9)"
+        description: "uv version (e.g. 0.11.1)"
         required: false
-        default: "0.10.9"
+        default: "0.11.1"
         type: string
       upload_artifact:
         description: "Upload the wheel as a workflow artifact"
@@ -116,7 +113,7 @@ The workflow accepts the following inputs and secrets:
 |----------------------|-----------|------------------------------------------------------|
 | `is_release`         | boolean   | Enables PyPI and Docker Hub publish steps            |
 | `uv_version`         | string    | `uv` version to install in the DevContainer          |
-| `python_version`     | string    | Python base image tag                                |
+| `python_version`     | string    | Python version override — falls back to `.python-version` if omitted |
 | `depsight_version`   | string    | Expected version (validated against `pyproject.toml`) |
 | `upload_artifact`    | boolean   | Attach the wheel as a downloadable workflow artifact |
 | `PYPI_TOKEN`         | secret    | API token for PyPI publishing                        |

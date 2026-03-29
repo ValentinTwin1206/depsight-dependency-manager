@@ -8,17 +8,14 @@ on:
         required: true
         type: string
       python_version:
-        description: "Python version used for the build"
+        description: "Python version override (leave empty to use .python-version)"
         required: false
-        default: "3.12"
-        type: choice
-        options:
-          - "3.12"
-          - "3.13"
+        default: ""
+        type: string
       uv_version:
-        description: "uv version to install in the DevContainer (e.g. 0.10.9)"
+        description: "uv version (e.g. 0.11.1)"
         required: false
-        default: "0.10.9"
+        default: "0.11.1"
         type: string
       upload_artifact:
         description: "Upload the wheel as a workflow artifact"
@@ -30,10 +27,10 @@ jobs:
   parse-version:
     runs-on: ubuntu-latest
     outputs:
-      depsight_version: ${{ steps.version.outputs.version }}
+      depsight_version: ${{ steps.versions.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - id: version
+      - id: versions
         run: |
           version=$(grep '^version' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "version=$version" >> "$GITHUB_OUTPUT"

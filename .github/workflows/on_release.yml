@@ -34,8 +34,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       is_release: true
-      uv_version: "0.10.9"
-      python_version: "3.12"
+      uv_version: "0.11.1"
       depsight_version: ${{ github.event.release.tag_name }}
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}

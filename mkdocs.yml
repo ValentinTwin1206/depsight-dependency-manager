@@ -5,8 +5,8 @@ theme:
   name: material
   palette:
     scheme: default
-    primary: indigo
-    accent: indigo
+    primary: orange
+    accent: orange
   features:
     - navigation.tabs
     - navigation.sections
@@ -37,8 +37,9 @@ nav:
           - Project Overview: technical-documentation/development/project-overview.md
           - Development Environment: technical-documentation/development/dev-environment.md
           - CLI Architecture: technical-documentation/development/cli-architecture.md
+          - Agentic Engineering: technical-documentation/development/agentic-engineering.md
       - Integration & Deployment: 
-          - Packaging: technical-documentation/integration_and_deployment/packaging.md
+          - Distribution: technical-documentation/integration_and_deployment/distribution.md
           - Containerization: technical-documentation/integration_and_deployment/containerization.md
           - CI/CD: technical-documentation/integration_and_deployment/ci_cd.md
   - Instructions:

@@ -12,10 +12,12 @@ jobs:
   parse-version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.get_version.outputs.version }}
+      version: ${{ steps.versions.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - id: get_version
+      
+      - name: Parse version
+        id: versions
         run: |
           version=$(grep '^version' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "version=$version" >> "$GITHUB_OUTPUT"
@@ -25,6 +27,5 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       is_release: false
-      uv_version: "0.10.9"
-      python_version: "3.12"
+      uv_version: "0.11.1"
       depsight_version: ${{ needs.parse-version.outputs.version }}

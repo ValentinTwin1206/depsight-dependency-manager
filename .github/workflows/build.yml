@@ -8,12 +8,13 @@ on:
         required: true
         type: boolean
       uv_version:
-        description: "uv version to install in the DevContainer (e.g. 0.10.9)"
+        description: "uv version to install in the DevContainer (e.g. 0.11.1)"
         required: true
         type: string
       python_version:
-        description: "Underlying python version (e.g. 3.12)"
-        required: true
+        description: "Python version override — falls back to .python-version if omitted"
+        required: false
+        default: ""
         type: string
       depsight_version:
         description: "Depsight version (e.g. 1.0.0)"
@@ -33,7 +34,6 @@ on:
         required: false
 
 env:
-  PYTHON_VERSION: ${{ inputs.python_version }}
   UV_VERSION: ${{ inputs.uv_version }}
 
 jobs:
@@ -43,6 +43,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Resolve Python version
+        id: python
+        env:
+          PYTHON_VERSION_INPUT: ${{ inputs.python_version }}
+        run: |
+          if [[ -n "${PYTHON_VERSION_INPUT}" ]]; then
+            echo "python_version=${PYTHON_VERSION_INPUT}" >> "$GITHUB_OUTPUT"
+          else
+            echo "python_version=$(cat .python-version)" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Verify version matches pyproject.toml
         env:
@@ -135,7 +146,7 @@ jobs:
           context: .
           push: true
           build-args: |
-            PYTHON_VERSION=${{ inputs.python_version }}
+            PYTHON_VERSION=${{ steps.python.outputs.python_version }}
             UV_VERSION=${{ inputs.uv_version }}
           tags: |
             ${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}
