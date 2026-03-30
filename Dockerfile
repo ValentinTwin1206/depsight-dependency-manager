@@ -16,6 +16,7 @@ RUN uv sync --frozen --no-dev --no-install-project
 # Install the actual project
 COPY src/ src/
 COPY README.md ./
+
 # --no-editable ensures the code is physically moved into site-packages
 RUN uv sync --frozen --no-dev --no-editable
 

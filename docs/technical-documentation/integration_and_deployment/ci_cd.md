@@ -95,11 +95,13 @@ flowchart LR
     V["Verify version"]
     B["Lint, test & build wheel"]
     A["Upload artifact"]
+    D["Build Docker image"]
     P["Publish to PyPI"]
-    D["Build & push Docker image"]
+    PD["Push Docker image"]
 
     V --> B --> A
-    B --> P --> D
+    B --> D
+    B --> P --> PD
   end
 
   PR -- "is_release: false" --> V
@@ -180,11 +182,10 @@ On release builds (`is_release: true`), the wheel is published to PyPI using `uv
 
 ### Setting Up Buildx
 
-[Docker Buildx](https://docs.docker.com/build/buildx/) is a CLI plugin that extends `docker build` with BuildKit features such as multi-platform builds and advanced caching. The workflow initialises it with the official action.
+[Docker Buildx](https://docs.docker.com/build/buildx/) is a CLI plugin that extends `docker build` with BuildKit features such as multi-platform builds and advanced caching. The workflow initialises it on every run so the Docker image build step can execute regardless of whether this is a release.
 
 ```yaml
 - name: Set up Docker Buildx
-  if: ${{ inputs.is_release }}
   uses: docker/setup-buildx-action@v3
 ```
 
@@ -204,12 +205,33 @@ The workflow authenticates to Docker Hub using a username stored as a repository
 !!! info "Docker Hub Credentials"
     `DOCKER_USERNAME` is configured as a repository **variable** and `DOCKER_PAT` as a repository **secret**. The PAT requires the **Read & Write** permission scope for the target repository on Docker Hub.
 
-### Building and Pushing the Docker Image
+### Building the Docker Image
 
-The image is built and pushed in a single step using `docker/build-push-action`. The Python and `uv` versions are forwarded as build arguments so the image matches the versions used in the CI test environment. Two tags are applied: the exact release version and `latest`.
+The Docker image is built on every workflow run — not just releases — so that build failures are caught early. The `load: true` option imports the image into the local Docker daemon without pushing it to a registry. The Python and `uv` versions are forwarded as build arguments so the image matches the versions used in the CI test environment. Two tags are applied: the exact release version and `latest`.
 
 ```yaml
-- name: Build and push Docker image
+- name: Set up Docker Buildx
+  uses: docker/setup-buildx-action@v3
+
+- name: Build Docker image
+  uses: docker/build-push-action@v6
+  with:
+    context: .
+    load: true
+    build-args: |
+      PYTHON_VERSION=${{ inputs.python_version }}
+      UV_VERSION=${{ inputs.uv_version }}
+    tags: |
+      ${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}
+      ${{ vars.DOCKER_REPOSITORY }}:latest
+```
+
+### Pushing the Docker Image
+
+On release builds (`is_release: true`), the image is pushed to Docker Hub in a separate step after authenticating. Keeping the push separate from the build ensures that every PR and dispatch run validates the Dockerfile, while only tagged releases are published.
+
+```yaml
+- name: Push Docker image
   if: ${{ inputs.is_release }}
   uses: docker/build-push-action@v6
   with:
