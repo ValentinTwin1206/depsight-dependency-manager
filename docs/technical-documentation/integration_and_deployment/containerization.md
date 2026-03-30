@@ -52,13 +52,13 @@ The `Dockerfile` is composed of a small set of instructions that together define
 
 A [multi-stage build](https://docs.docker.com/build/building/multi-stage/) splits a Dockerfile into multiple `FROM` stages. Each stage starts from its own base image and can selectively copy artifacts from a previous stage. The main advantage is image size. Build-time tools, compilers, and intermediate files never end up in the final image because they are discarded when the stage completes.
 
-Depsight uses two stages. The **builder** stage starts from `python:3.12-slim`, installs `uv` and all project dependencies, and then installs `depsight` itself. The **final** stage starts from a fresh `python:3.12-slim` image and copies only the runtime artifacts (the `uv` binaries, the virtual environment, and the plugin source) from the builder. This keeps build-time dependencies such as `curl` and the full source tree out of the shipped image.
+Depsight uses two stages. The **builder** stage starts from `python:3.12`, installs `uv` and all project dependencies, and then installs `depsight` itself. The **final** stage starts from a fresh `python:3.12-slim` image and copies only the runtime artifacts (the `uv` binaries, the virtual environment, and the plugin source) from the builder. This keeps build-time dependencies such as `curl` and the full source tree out of the shipped image.
 
 <div style="zoom: 1.6;">
 ```mermaid
 flowchart LR
   subgraph Builder["Builder Stage"]
-    B1["Base: python:3.12-slim"]
+    B1["Base: python:3.12"]
     B2["Install uv"]
     B3["Install dependencies"]
     B4["Install Depsight"]
@@ -79,35 +79,31 @@ flowchart LR
 
 ##### Builder Stage
 
-The builder stage starts from `python:3.12-slim`, installs [`uv`](https://docs.astral.sh/uv/) via its official installer script, and then builds the project inside a virtual environment.
+The builder stage starts from `python:3.12, installs [`uv`](https://docs.astral.sh/uv/) via its official installer script, and then builds the project inside a virtual environment.
 
 ```dockerfile
 ARG PYTHON_VERSION=3.12
-FROM python:${PYTHON_VERSION}-slim AS builder
+FROM python:${PYTHON_VERSION} AS builder
 
 ARG UV_VERSION=0.11.1
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
+RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
 
 WORKDIR /depsight
 ```
 
-Dependencies are installed **before** copying the source code. Docker caches each layer independently, so as long as `pyproject.toml` and `uv.lock` have not changed, the dependency layer is reused and only the final project install is re-run.
+Dependencies are installed **before** copying the source code. Docker caches each layer independently, so as long as `pyproject.toml`, `uv.lock`, `README.md` and `CONTRIBUTING.md` have not changed, the dependency layer is reused and only the final project install is re-run.
 
 ```dockerfile
-# Copy dependency config first (cache layer for dependency install)
+# Install dependencies (Cached Layer)
 COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
 
-# Install dependencies only (not the project itself)
-RUN uv sync --frozen --no-install-project
-
-# Copy source code
+# Install the actual project
 COPY src/ src/
+COPY README.md ./
 
-# Install the project (reuses cached dependency layer above)
-RUN uv sync --frozen
+# --no-editable ensures the code is physically moved into site-packages
+RUN uv sync --frozen --no-dev --no-editable
 ```
 
 !!! tip "Layer Caching"
@@ -118,7 +114,6 @@ RUN uv sync --frozen
 The final stage starts from a fresh `python:3.12-slim` image and copies only what is needed at runtime.
 
 ```dockerfile
-ARG PYTHON_VERSION=3.12
 FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /depsight
@@ -129,14 +124,12 @@ ARG USER_NAME=depsight
 RUN groupadd -g ${USER_ID} ${USER_NAME} && \
     useradd -u ${USER_ID} -g ${USER_NAME} -m -s /bin/bash ${USER_NAME}
 
-# Copy uv binaries from the builder stage
+# Copy the virtual environment ONLY
+# Because we used --no-editable, the code lives inside this folder now.
+COPY --from=builder --chown=${USER_NAME}:${USER_NAME} /depsight/.venv /depsight/.venv
+
+# Copy uv binaries ONLY if Depsight needs to call 'uv' commands at runtime
 COPY --from=builder /usr/local/bin/uv /usr/local/bin/uvx /usr/local/bin/
-
-# Copy the virtual environment (includes the installed project + dependencies)
-COPY --from=builder /depsight/.venv /depsight/.venv
-
-# Copy only the plugin source needed at runtime
-COPY --from=builder /depsight/src /depsight/src
 ```
 
 The container runs as a **non-root user** (`depsight`) and exposes the CLI as its entrypoint.
@@ -164,9 +157,9 @@ The `docker build` command reads the `Dockerfile` in the current directory, exec
 docker build -t depsight:local .
 ```
 
-The `docker run` command creates a short-lived container from the local image. The `--rm` flag removes the container automatically after it exits. Any arguments after the image name are forwarded to the `depsight` entrypoint, so `--help` and `scan --help` print the CLI and subcommand usage respectively.
+The `docker run` command creates a short-lived container from the local image. The `--rm` flag removes the container automatically after it exits. Any arguments after the image name are forwarded to the `depsight` entrypoint, so `--help` and `uv scan --help` print the CLI and subcommand usage respectively.
 
 ```bash
 docker run --rm depsight:local --help
-docker run --rm depsight:local scan --help
+docker run --rm depsight:local uv scan --help
 ```

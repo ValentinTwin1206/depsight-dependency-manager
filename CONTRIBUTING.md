@@ -38,7 +38,7 @@
 - Verify the image works:
 
   ```bash
-  docker run --rm depsight --help
+  docker run -it --rm -v "$(pwd)":/project depsight uv scan --project-dir /project
   ```
 
 ### Run Tests

@@ -309,7 +309,7 @@ xychart-beta
 
 #### Install Dependencies
 
-To install the direct and transitive dependencies declared in `pyproject.toml`, use `uv sync` during local development. In CI/CD, use `uv sync --locked` instead so the build installs exactly what is pinned in the committed `uv.lock` and fails immediately if the lockfile is out of sync with `pyproject.toml`.
+To install the direct and transitive dependencies declared in `pyproject.toml`, use `uv sync` during local development. In CI/CD pipelines, use `uv sync --locked` to ensure the build environment matches the committed `uv.lock` exactly. This prevents "it works on my machine" issues by failing the build if the lockfile is out of sync with your project requirements.
 
 === "Local Development"
 
@@ -317,22 +317,29 @@ To install the direct and transitive dependencies declared in `pyproject.toml`, 
     uv sync
     ```
 
-=== "CI/CD"
+=== "CI/CD (Verification)"
 
     ```bash
-    uv sync --locked
+    uv sync --all-groups --locked
     ```
 
-On a clean checkout, `uv sync` resolves the dependency graph, creates `uv.lock`, and sets up the `.venv`. On subsequent local runs, it updates both to match the current state of `pyproject.toml`. In CI/CD, `uv sync --locked` installs directly from the committed lockfile and aborts if that lockfile was not regenerated after a dependency change.
+=== "CI/CD (Production deployment)"
 
-| Command                       | Effect                                                                                     |
-|-------------------------------|--------------------------------------------------------------------------------------------|
-| `uv sync`                     | Installs all project dependencies                         |
-| `uv sync --group <group>`     | Also installs the dependencies declared in the named `<group>`                             |
-| `uv sync --locked`            | Installs from `uv.lock` and fails if the lockfile is not up to date with `pyproject.toml`  |
-| `uv sync --frozen`            | Installs from `uv.lock` as-is, without checking whether it matches `pyproject.toml`        |
-| `uv pip list`                 | Lists the packages currently installed in the active environment                            |
-| `uv lock --upgrade`           | Re-resolves the entire dependency graph and writes a new `uv.lock`                         |
+    ```bash
+    uv sync --frozen --no-dev
+    ```
+
+On a clean checkout, `uv sync` resolves the dependency graph, generates an `uv.lock` file, and creates a synchronized virtual environment in `.venv/`. On subsequent runs, it incrementally updates the environment to match the latest state of `pyproject.toml`. In CI/CD, the `--locked` flag enforces that no manual changes were made to dependencies without a corresponding lockfile update.
+
+| Command                       | Effect                                                                        | Best Use Case          |
+|-------------------------------|-------------------------------------------------------------------------------|------------------------|
+| `uv sync`                     | Installs dependencies and the project in editable mode.                       | Daily Development      |
+| `uv sync --group <name>`      | Includes optional dependency-groups (e.g., `docs` or `lint`).                | Task-specific work     |
+| `uv sync --locked`            | Installs from `uv.lock`; aborts if `pyproject.toml` has changed.             | CI Test Pipelines      |
+| `uv sync --frozen`            | Installs from `uv.lock` as-is, without checking `pyproject.toml`.            | Docker / Production    |
+| `uv pip list`                 | Displays all packages in the current virtual environment.                     | Debugging              |
+| `uv lock --upgrade`           | Forces a re-resolution of all packages to the latest versions.               | Maintenance            |
+
 
 #### Updating Dependencies
 

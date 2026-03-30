@@ -44,11 +44,14 @@
         "DEPSIGHT_ENV": "development"
     },
     "forwardPorts": [8000],
+    "mounts": [
+        "source=depsight-uv-cache,target=/home/vscode/.cache/uv,type=volume"
+    ],
     "portsAttributes": {
         "8000": {
             "label": "MkDocs Dev Server",
             "onAutoForward": "notify"
         }
     },
-    "postCreateCommand": "uv sync --all-groups --frozen"
+    "postCreateCommand": "sudo chown -R vscode /home/vscode/.cache/uv && uv sync --all-groups"
 }

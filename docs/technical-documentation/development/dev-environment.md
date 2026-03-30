@@ -9,9 +9,29 @@ Depsight goes further by integrating [DevContainers](https://containers.dev/), a
 !!! info "Docker outside of Docker (DooD)"
     DooD mounts the host's Docker socket into the container rather than running a separate Docker daemon inside it, which avoids the complexity and privilege requirements of Docker-in-Docker.
 
-### Beyond Traditional Virtualization Techniques
+### Virtual Development Environment
 
-Tools like `venv`, `pipenv`, and `virtualenv` isolate Python packages, and for many projects that is enough. DevContainers go further because they control the full operating system layer, not just Python. That makes them useful when a project depends on system tools, specific runtimes, or a development setup that should match CI. However, they might introduce some overhead, as developers need Docker or any other container manager installed and should understand the basics of working with containers. The table below shows when that extra complexity is worth it:
+#### Traditional Python Virtual Environments
+
+Python virtual environments create isolated spaces where each project can maintain its own set of dependencies without interfering with the system Python installation or other projects. Tools like `venv`, `pipenv`, and `virtualenv` solve the common problem of dependency conflicts by giving each project a self-contained directory of installed packages. This isolation is lightweight, easy to set up, and sufficient for many Python projects.
+
+Among these tools, `venv` is the most widely used because it is included in the Python standard library since Python 3.3. To create and activate a virtual environment with `venv`:
+
+=== "Linux/macOS"
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+
+=== "Windows"
+    ```powershell
+    python -m venv .venv
+    .venv\Scripts\activate
+    ```
+
+#### Beyond Traditional Virtualization Techniques
+
+While traditional virtual environments isolate Python packages effectively, [DevContainers](https://containers.dev/) go further because they control the full operating system layer, not just Python. That makes them useful when a project depends on system tools, specific runtimes, or a development setup that should match CI. Instead of documenting setup steps in a README and hoping every contributor follows them correctly, a DevContainer defines and provisions the full environment as code automatically. However, they might introduce some overhead, as developers need Docker or any other container manager installed and should understand the basics of working with containers. The table below shows when that extra complexity is worth it:
 
 | Capability | venv / pipenv | DevContainer |
 |-------------|:---:|:---:|
@@ -112,6 +132,9 @@ The `build` section points to the `Dockerfile` and passes build arguments. `${lo
         "DEPSIGHT_ENV": "development"
     },
     "forwardPorts": [8000],
+    "mounts": [
+        "source=depsight-uv-cache,target=/home/vscode/.cache/uv,type=volume"
+    ],
     "portsAttributes": {
         "8000": {
             "label": "MkDocs Dev Server",
@@ -119,7 +142,7 @@ The `build` section points to the `Dockerfile` and passes build arguments. `${lo
         }
     },
     "postCreateCommand": "uv sync --all-groups",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}" //optional
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
 }
 ```
 

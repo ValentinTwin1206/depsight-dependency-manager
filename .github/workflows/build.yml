@@ -80,22 +80,29 @@ jobs:
         uses: devcontainers/ci@v0.3
         with:
           configFile: .devcontainer/devcontainer.json
+          buildArgs: |
+            PYTHON_VERSION=${{ steps.python.outputs.python_version }}
+            UV_VERSION=${{ inputs.uv_version }}
           runCmd: |
 
-            set -e
+            # Exit on error, unset vars, or pipe failures
+            set -euo pipefail  
 
-            echo "::group::Environment"
-            python --version
-            pip --version
-            which python
+            # Verify lockfile integrity
+            # This ensures pyproject.toml and uv.lock are perfectly in sync.
+            # If they aren't, the build fails here before wasting time on tests.
+            echo "::group::Dependency Integrity Check"
+            uv sync --all-groups --locked
             echo "::endgroup::"
 
+            # 2. Setup environment
             source .venv/bin/activate
 
             echo "::group::CLI health check"
             depsight --help
             echo "::endgroup::"
 
+            # 3. Quality Gates
             echo "::group::Ruff linting"
             ruff check src/ tests/
             echo "::endgroup::"
@@ -108,7 +115,9 @@ jobs:
             python -m pytest tests/ -v --tb=short
             echo "::endgroup::"
 
+            # 4. Release-Specific Safeguard: Clean & Build
             echo "::group::Build wheel"
+            rm -rf dist/
             uv build
             ls -lah dist
             echo "::endgroup::"
@@ -122,15 +131,32 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      - name: Install uv
+        if: ${{ inputs.is_release }}
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ inputs.uv_version }}
+
       - name: Upload wheel to PyPI
         if: ${{ inputs.is_release }}
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_TOKEN }}
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish --check
 
       - name: Set up Docker Buildx
-        if: ${{ inputs.is_release }}
         uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          build-args: |
+            PYTHON_VERSION=${{ steps.python.outputs.python_version }}
+            UV_VERSION=${{ inputs.uv_version }}
+          tags: |
+            ${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}
+            ${{ vars.DOCKER_REPOSITORY }}:latest
 
       - name: Log in to Docker Hub
         if: ${{ inputs.is_release }}
@@ -139,7 +165,7 @@ jobs:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
 
-      - name: Build and push Docker image
+      - name: Push Docker image
         if: ${{ inputs.is_release }}
         uses: docker/build-push-action@v6
         with:
