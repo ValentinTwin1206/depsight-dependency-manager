@@ -5,7 +5,8 @@ ARG PYTHON_VERSION="3.12"
 FROM python:${PYTHON_VERSION} AS builder
 
 # Copy uv binary from official image (Faster & more reliable than curl)
-COPY --from=ghcr.io/astral-sh/uv:0.11.1 /uv /uvx /usr/local/bin/
+ARG UV_VERSION="0.11.1"
+COPY --from=ghcr.io/astral-sh/uv:${UV_VERSION} /uv /uvx /usr/local/bin/
 
 WORKDIR /depsight
 
