@@ -164,11 +164,11 @@ jobs:
           output: "trivy-results.sarif"
           exit-code: "1"
           ignore-unfixed: true
-          vulns-type: "os,library"
+          vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
 
       - name: Upload Trivy scan to GitHub Security tab
-        if: ${{ inputs.is_release }}
+        if: ${{ always() && inputs.is_release }}
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "trivy-results.sarif"

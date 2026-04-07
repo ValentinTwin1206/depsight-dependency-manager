@@ -199,7 +199,7 @@ On release builds, the workflow scans the locally-built Docker image for known v
     severity: "CRITICAL,HIGH"
 
 - name: Upload Trivy scan to GitHub Security tab
-  if: ${{ inputs.is_release }}
+  if: ${{ always() && inputs.is_release }}
   uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: "trivy-results.sarif"
