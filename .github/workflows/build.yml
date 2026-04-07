@@ -156,7 +156,6 @@ jobs:
         run: uv publish
         
       - name: Run Trivy vulnerability scan
-        if: ${{ inputs.is_release }}
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}"
@@ -168,7 +167,7 @@ jobs:
           severity: "CRITICAL,HIGH"
 
       - name: Upload Trivy scan to GitHub Security tab
-        if: ${{ always() && inputs.is_release }}
+        if: ${{ always() }}
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "trivy-results.sarif"
