@@ -24,8 +24,9 @@ on:
         type: boolean
 
 permissions:
-  security-events: write # REQUIRED for the called Trivy scan to upload results
   actions: read
+  contents: read
+  security-events: write # REQUIRED for the called Trivy scan to upload results
   
 jobs:
   parse-version:
