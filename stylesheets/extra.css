@@ -1,0 +1,88 @@
+.md-typeset {
+    --depsight-orange: #cd853f;
+    --depsight-orange-light: #e7b07a;
+    --depsight-orange-dark: #9d6430;
+    --depsight-peach: #ffdab9;
+}
+
+[data-md-color-scheme="default"] {
+    --md-primary-fg-color: #cd853f;
+    --md-primary-fg-color--light: #e7b07a;
+    --md-primary-fg-color--dark: #9d6430;
+    --md-accent-fg-color: #cd853f;
+    --md-accent-fg-color--transparent: rgba(205, 133, 63, 0.12);
+}
+
+.md-header {
+    background-color: #cd853f;
+}
+
+.md-tabs__link--active,
+.md-nav__link:focus,
+.md-nav__link:hover {
+    color: #9d6430;
+}
+
+.md-search__form {
+    background-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Reset tabbed content to default Material styling — no accent overrides */
+.md-typeset .tabbed-labels > label,
+.md-typeset .tabbed-set > label,
+.md-typeset .tabbed-set > input:checked + label,
+.md-typeset .tabbed-labels > label:hover,
+.md-typeset .tabbed-set > label:hover {
+    color: var(--md-default-fg-color) !important;
+    border-color: var(--md-default-fg-color--lighter) !important;
+}
+
+.md-typeset .tabbed-set > input:checked + label {
+    border-color: var(--md-default-fg-color) !important;
+}
+
+.md-typeset .tabbed-labels > label *,
+.md-typeset .tabbed-set > label *,
+.md-typeset .tabbed-set > input:checked + label *,
+.md-typeset .tabbed-labels > label:hover *,
+.md-typeset .tabbed-set > label:hover * {
+    color: inherit !important;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+    border-color: rgba(205, 133, 63, 0.18);
+}
+
+.full-width {
+    width: 100%;
+}
+
+.md-typeset__scrollwrap:has(> .md-typeset__table > table.full-width),
+.md-typeset__table:has(> table.full-width) {
+    width: 100%;
+    display: block;
+}
+
+.code-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.code-columns > * {
+    margin: 0;
+    min-width: 0;
+}
+
+.tag-green {
+    display: inline-block;
+    padding: 0 0.5em;
+    border-radius: 0.25em;
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background-color: #d4edda;
+    color: #1a6630;
+}

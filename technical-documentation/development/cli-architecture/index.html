@@ -1,0 +1,1093 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="A modular dependency analysis framework for local workspaces" name="description"/>
+<link href="../dev-environment/" rel="prev"/>
+<link href="../agentic-engineering/" rel="next"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.6" name="generator"/>
+<title>CLI Architecture - Depsight - Dependency Analysis Framework</title>
+<link href="../../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="orange" data-md-color-primary="orange" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#cli-architecture">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Depsight - Dependency Analysis Framework" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Depsight - Dependency Analysis Framework">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Depsight - Dependency Analysis Framework
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              CLI Architecture
+            
+          </span>
+</div>
+</div>
+</div>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../project-overview/">
+          
+  
+  
+  Technical Documentation
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../instructions/getting-started/getting-started/">
+          
+  
+  
+  Instructions
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Depsight - Dependency Analysis Framework" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Depsight - Dependency Analysis Framework">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    Depsight - Dependency Analysis Framework
+  </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Technical Documentation
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Technical Documentation
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_1_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Architecture &amp; Development
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_1_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_1_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture &amp; Development
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../project-overview/">
+<span class="md-ellipsis">
+    
+  
+    Project Overview
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../dev-environment/">
+<span class="md-ellipsis">
+    
+  
+    Development Environment
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    CLI Architecture
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    
+  
+    CLI Architecture
+  
+
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#python-terminal-application-ecosystem">
+<span class="md-ellipsis">
+      
+        Python Terminal Application Ecosystem
+      
+    </span>
+</a>
+<nav aria-label="Python Terminal Application Ecosystem" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cli-frameworks">
+<span class="md-ellipsis">
+      
+        CLI Frameworks
+      
+    </span>
+</a>
+<nav aria-label="CLI Frameworks" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#argparse">
+<span class="md-ellipsis">
+      
+        argparse
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#click">
+<span class="md-ellipsis">
+      
+        Click
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tui-frameworks">
+<span class="md-ellipsis">
+      
+        TUI Frameworks
+      
+    </span>
+</a>
+<nav aria-label="TUI Frameworks" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#textual">
+<span class="md-ellipsis">
+      
+        Textual
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#alternatives">
+<span class="md-ellipsis">
+      
+        Alternatives
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#architecture-and-design-patterns">
+<span class="md-ellipsis">
+      
+        Architecture and Design Patterns
+      
+    </span>
+</a>
+<nav aria-label="Architecture and Design Patterns" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#depsight-entry-point">
+<span class="md-ellipsis">
+      
+        Depsight Entry Point
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scalable-project-structure">
+<span class="md-ellipsis">
+      
+        Scalable Project Structure
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#command-dispatcher-pattern">
+<span class="md-ellipsis">
+      
+        Command Dispatcher Pattern
+      
+    </span>
+</a>
+<nav aria-label="Command Dispatcher Pattern" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#improved-testability">
+<span class="md-ellipsis">
+      
+        Improved Testability
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#factory-pattern">
+<span class="md-ellipsis">
+      
+        Factory Pattern
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-pattern">
+<span class="md-ellipsis">
+      
+        Plugin Pattern
+      
+    </span>
+</a>
+<nav aria-label="Plugin Pattern" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#entry-point-registration">
+<span class="md-ellipsis">
+      
+        Entry Point Registration
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-discovery">
+<span class="md-ellipsis">
+      
+        Plugin Discovery
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-contract">
+<span class="md-ellipsis">
+      
+        Plugin Contract
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dataclass-pattern">
+<span class="md-ellipsis">
+      
+        Dataclass Pattern
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../agentic-engineering/">
+<span class="md-ellipsis">
+    
+  
+    Agentic Engineering
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_1_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Integration &amp; Deployment
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_1_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_1_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration &amp; Deployment
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../integration_and_deployment/distribution/">
+<span class="md-ellipsis">
+    
+  
+    Distribution
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../integration_and_deployment/containerization/">
+<span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../integration_and_deployment/ci_cd/">
+<span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Instructions
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Instructions
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/getting-started/getting-started/">
+<span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Tasks
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Tasks
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-1-write-a-npm-plugin/">
+<span class="md-ellipsis">
+    
+  
+    Task 1: Write an NPM Plugin
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-2-package-and-publish-your-plugin/">
+<span class="md-ellipsis">
+    
+  
+    Task 2: Package and Publish Your Plugin
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-3-scan-dependencies/">
+<span class="md-ellipsis">
+    
+  
+    Task 3: Scan Dependencies
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#python-terminal-application-ecosystem">
+<span class="md-ellipsis">
+      
+        Python Terminal Application Ecosystem
+      
+    </span>
+</a>
+<nav aria-label="Python Terminal Application Ecosystem" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#cli-frameworks">
+<span class="md-ellipsis">
+      
+        CLI Frameworks
+      
+    </span>
+</a>
+<nav aria-label="CLI Frameworks" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#argparse">
+<span class="md-ellipsis">
+      
+        argparse
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#click">
+<span class="md-ellipsis">
+      
+        Click
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#tui-frameworks">
+<span class="md-ellipsis">
+      
+        TUI Frameworks
+      
+    </span>
+</a>
+<nav aria-label="TUI Frameworks" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#textual">
+<span class="md-ellipsis">
+      
+        Textual
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#alternatives">
+<span class="md-ellipsis">
+      
+        Alternatives
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#architecture-and-design-patterns">
+<span class="md-ellipsis">
+      
+        Architecture and Design Patterns
+      
+    </span>
+</a>
+<nav aria-label="Architecture and Design Patterns" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#depsight-entry-point">
+<span class="md-ellipsis">
+      
+        Depsight Entry Point
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#scalable-project-structure">
+<span class="md-ellipsis">
+      
+        Scalable Project Structure
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#command-dispatcher-pattern">
+<span class="md-ellipsis">
+      
+        Command Dispatcher Pattern
+      
+    </span>
+</a>
+<nav aria-label="Command Dispatcher Pattern" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#improved-testability">
+<span class="md-ellipsis">
+      
+        Improved Testability
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#factory-pattern">
+<span class="md-ellipsis">
+      
+        Factory Pattern
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-pattern">
+<span class="md-ellipsis">
+      
+        Plugin Pattern
+      
+    </span>
+</a>
+<nav aria-label="Plugin Pattern" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#entry-point-registration">
+<span class="md-ellipsis">
+      
+        Entry Point Registration
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-discovery">
+<span class="md-ellipsis">
+      
+        Plugin Discovery
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-contract">
+<span class="md-ellipsis">
+      
+        Plugin Contract
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dataclass-pattern">
+<span class="md-ellipsis">
+      
+        Dataclass Pattern
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="cli-architecture">CLI Architecture</h1>
+<h2 id="overview">Overview</h2>
+<p>One of Python's main use cases is building terminal applications — the Python ecosystem itself is full of them: <code>pip</code>, <code>uv</code>, <code>ruff</code>, <code>pytest</code>, and many others are all CLI tools, making them ideal for CI/CD pipelines where every step is a shell command and there is no graphical display available.</p>
+<p>Depsight is also implemented as a terminal application, available through the <code>depsight</code> CLI. A <strong>CLI</strong> application accepts arguments and flags from the user and executes a command — no graphical window required. <strong>TUI</strong> applications extend this further by rendering interactive panels and widgets directly in the terminal. Modern emulators such as <a href="https://github.com/microsoft/terminal">Windows Terminal</a> support true-colour rendering and GPU-accelerated drawing, enabling tools like <a href="https://www.anthropic.com/claude-code">Claude Code</a> and <a href="https://github.com/jesseduffield/lazygit">Lazygit</a> that rival graphical interfaces in visual quality. Every major language has mature frameworks for building both.</p>
+<hr/>
+<h2 id="python-terminal-application-ecosystem">Python Terminal Application Ecosystem</h2>
+<h3 id="cli-frameworks">CLI Frameworks</h3>
+<h4 id="argparse">argparse</h4>
+<p><a href="https://docs.python.org/3/library/argparse.html">argparse</a> is Python's built-in CLI parsing library. A developer defines a <code>parser</code> instance, adds arguments, and calls <code>parse_args()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># greet.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">greet</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Say hello."</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--name"</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Your name."</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Hello, </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">greet</span><span class="p">()</span>
+</code></pre></div>
+<p><code>argparse</code> automatically generates help text and handles type conversion, but requires more boilerplate than higher-level libraries.</p>
+<h4 id="click">Click</h4>
+<p><a href="https://click.palletsprojects.com/">Click</a> is the most widely used Python library for building command-line interfaces. Instead of manually constructing a parser, a developer decorates functions with <code>@click.command()</code> and <code>@click.option()</code>. Click handles argument parsing, type conversion, help generation, and error reporting:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># greet.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">"--name"</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">"Your name."</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Say hello."""</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Hello, </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">greet</span><span class="p">()</span>
+</code></pre></div>
+<p>Running <code>python greet.py --help</code> produces formatted help text automatically. Click also supports <strong>command groups</strong>, a top-level entry point with multiple subcommands, which is the standard pattern for larger tools that expose several operations under a single program name.</p>
+<h3 id="tui-frameworks">TUI Frameworks</h3>
+<h4 id="textual">Textual</h4>
+<p><a href="https://textual.textualize.io/">Textual</a> is a TUI framework built on top of Rich by the same team. While Rich focuses on styled output for CLI applications, Textual provides a full widget toolkit for building interactive terminal applications with buttons, input fields, data tables, and layout containers. It uses a CSS-like styling system and an async event loop, making it closer to a frontend framework than a traditional CLI library. Tools like <a href="https://github.com/darrenburns/posting">Posting</a> (an API client) and <a href="https://github.com/Textualize/trogon">Trogon</a> (a CLI-to-TUI converter) demonstrate what Textual is capable of.</p>
+<h4 id="alternatives">Alternatives</h4>
+<p>Textual is the most modern option with the best developer experience, but older frameworks remain widely used. <a href="https://urwid.org/">urwid</a> is one of the oldest Python TUI libraries, with widgets, layouts, and its own event loop, and is still actively maintained and used in production tools. <a href="https://python-prompt-toolkit.readthedocs.io/">prompt_toolkit</a> powers IPython and the Python REPL — focused on interactive prompts and line editors with autocompletion, syntax highlighting, and key bindings, but also capable of full TUI layouts.</p>
+<hr/>
+<h2 id="architecture-and-design-patterns">Architecture and Design Patterns</h2>
+<h3 id="depsight-entry-point">Depsight Entry Point</h3>
+<p>The <code>pyproject.toml</code> file supports a <code>[project.scripts]</code> table that maps a command name such as <code>depsight</code> to a Python callable. When the package is installed, the installer creates a small wrapper script on <code>PATH</code> so the command can be invoked directly from the shell without a <code>python -m</code> prefix:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[project.scripts]</span>
+<span class="n">depsight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"depsight.cli:main"</span>
+</code></pre></div>
+<p>The value <code>"depsight.cli:main"</code> tells the installer to import the <code>main</code> function from the <code>depsight.cli</code> module. The generated wrapper script calls this function, forwards the process exit code, and handles the <code>sys.argv</code> handoff. In consequence, typing <code>depsight</code> in a terminal is equivalent to running <code>python -c "from depsight.cli import main; main()"</code>.</p>
+<h3 id="scalable-project-structure">Scalable Project Structure</h3>
+<p>Depsight separates the CLI layer from business logic using the <strong>thin CLI, fat core</strong> principle. The CLI parses arguments and renders output; all orchestration, plugin resolution, and dependency collection live in a framework-independent core. The top-level structure reflects this separation:</p>
+<div class="highlight"><pre><span></span><code>depsight/
+├── cli.py              # CLI entry point and command registration
+├── commands/           # Command handlers (no Click dependency - easy to test)
+├── core/
+│   ├── dispatcher.py   # Command dispatcher
+│   └── plugins/        # Plugin contract, factory, and implementations
+└── utils/              # Shared constants, logging, helpers
+</code></pre></div>
+<h3 id="command-dispatcher-pattern">Command Dispatcher Pattern</h3>
+<p>The command dispatcher pattern is a common approach in CLI applications, used in tools such as Django's <code>call_command()</code>, Flask's CLI, and Git's subcommand routing. Rather than growing <code>if</code>/<code>elif</code> chains as new commands are added, a registry maps command names to handler callables, so the dispatch logic itself never needs to change.</p>
+<p>In Depsight, every command delegates to <code>dispatch_command()</code>, which looks up the matching handler in <code>COMMAND_REGISTRY</code>, uses the <code>PluginFactory</code> to create the correct plugin instance, and forwards both to the handler. The handler executes the business logic and returns an exit code (<code>0</code> for success, <code>1</code> for failure) back to the shell.</p>
+<pre class="mermaid"><code>flowchart LR
+    CLI["CLI parses args"] --&gt;|"command name + options"| RUN["dispatch_command()"]
+    RUN --&gt;|"lookup"| REG["COMMAND_REGISTRY&lt;br/&gt;{name → handler}"]
+    RUN --&gt; FAC["PluginFactory.create()"]
+    FAC --&gt; PLUGIN["Plugin instance"]
+    RUN --&gt; HANDLER["resolved handler&lt;br/&gt;(e.g. scan_handler)"]
+    HANDLER --&gt; PLUGIN</code></pre>
+<h4 id="improved-testability">Improved Testability</h4>
+<p>Because <code>scan_handler</code> receives a plugin, a path, and a logger as plain arguments, a unit test can pass a <code>MockPlugin</code> directly and assert on <code>plugin.dependencies</code> without launching a process or parsing terminal output.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">depsight.commands.scan</span><span class="w"> </span><span class="kn">import</span> <span class="n">scan_handler</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scan_handler_collects_dependencies</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">plugin</span> <span class="o">=</span> <span class="n">MockPlugin</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"uv"</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+
+    <span class="n">scan_handler</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">plugin</span><span class="o">.</span><span class="n">collect_called</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">dependencies</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+</code></pre></div>
+<p>Without this separation, the equivalent test would require Click's <code>CliRunner</code> to invoke <code>main</code>, inspect <code>result.output</code> as a string, and assert on the rendered table format. This couples the test to CLI parsing and Rich rendering rather than the business logic being tested.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">click.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliRunner</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">depsight.cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_scan_via_cli</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">CliRunner</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="p">[</span><span class="s2">"uv"</span><span class="p">,</span> <span class="s2">"scan"</span><span class="p">,</span> <span class="s2">"--project-dir"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)])</span>
+
+    <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">exit_code</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="s2">"click"</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">output</span>  <span class="c1"># fragile: depends on rendered table format</span>
+</code></pre></div>
+<h3 id="factory-pattern">Factory Pattern</h3>
+<p>The factory pattern is one of the most widely used creational design patterns in software engineering. It centralises object construction behind a single interface so that callers request an instance by name or type without knowing which concrete class is returned. Validation, error handling, and implementation selection are all handled in one place, making it straightforward to add new implementations without touching existing call sites.</p>
+<p>In Depsight, <code>PluginFactory.create()</code> is the single entry point for plugin instantiation. The dispatcher passes a plugin name string and receives a fully validated <code>BasePlugin</code> instance in return, with no knowledge of which class was constructed or how:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PluginFactory</span><span class="p">:</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BasePlugin</span><span class="p">:</span>
+        <span class="c1"># Step 1: Lookup — resolve the plugin class from the registry</span>
+        <span class="n">plugin_cls</span> <span class="o">=</span> <span class="n">SUPPORTED_PLUGINS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">plugin_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plugin_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Unknown plugin '</span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">'. "</span>
+                <span class="sa">f</span><span class="s2">"Available: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_PLUGINS</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Step 2: Instantiate — create the plugin object</span>
+        <span class="n">plugin</span> <span class="o">=</span> <span class="n">plugin_cls</span><span class="p">()</span>
+
+        <span class="c1"># Step 3: Validate — confirm the instance satisfies the BasePlugin protocol</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">BasePlugin</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Plugin '</span><span class="si">{</span><span class="n">plugin_name</span><span class="si">}</span><span class="s2">' (</span><span class="si">{</span><span class="n">plugin_cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">) "</span>
+                <span class="s2">"does not implement BasePlugin."</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">plugin</span>
+</code></pre></div>
+<p>The factory executes three steps in sequence:</p>
+<ul>
+<li>It <strong>looks up</strong> the plugin class in the registry</li>
+<li>It <strong>instantiates</strong> the plugin class</li>
+<li>It <strong>validates</strong> that the resulting object satisfies the <code>BasePlugin</code> protocol at runtime.</li>
+</ul>
+<p>This effectively eliminates <code>if</code>/<code>elif</code> chains, catches third-party plugins that declare an entry point but fail to implement the required interface, and ensures that adding a new plugin never requires changes outside the plugin itself and its entry point registration.</p>
+<h3 id="plugin-pattern">Plugin Pattern</h3>
+<p>The plugin pattern is an advanced, language-agnostic design pattern that was standardised in Python when <code>importlib.metadata</code> was added to the standard library in Python 3.8 (2019). It lets an application be extended without modifying its source code. Rather than maintaining a hard-coded list of supported tools, the application defines a <strong>hook</strong> that installed packages can register against. When the application starts, it finds everything that has registered under that hook and loads it automatically.</p>
+<p>Prominent examples are <a href="https://docs.pytest.org/">pytest</a>, where installing <code>pytest-cov</code> or <code>pytest-xdist</code> is all it takes to activate those plugins, and Go-based tools such as <a href="https://docs.docker.com/engine/extend/">Docker</a>, which discovers installed CLI plugins at startup — Docker Compose v2 uses the same approach.</p>
+<h4 id="entry-point-registration">Entry Point Registration</h4>
+<p>Plugins register themselves in the <code>[project.entry-points]</code> table of <code>pyproject.toml</code>, mapping a short name to the dotted import path of the plugin class. Depsight's built-in plugins are registered directly in its own <code>pyproject.toml</code>:</p>
+<div class="highlight"><span class="filename">Internal plugin — depsight/pyproject.toml</span><pre><span></span><code><span class="k">[project.entry-points.</span><span class="s2">"depsight.plugins"</span><span class="k">]</span>
+<span class="n">uv</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"depsight.core.plugins.uv.uv:UVPlugin"</span>
+<span class="n">vsce</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"depsight.core.plugins.vsce.vsce:VSCEPlugin"</span>
+</code></pre></div>
+<p>The system also supports <strong>external</strong> plugins that are developed and distributed independently and declare entry points under the same group name. An external plugin requires no changes to the Depsight codebase; it simply ships its own <code>pyproject.toml</code>, and the <a href="#factory-pattern">Factory Pattern</a> takes care of looking it up, instantiating it, and validating that it satisfies the <code>BasePlugin</code> contract:</p>
+<div class="highlight"><span class="filename">External plugin — depsight-npm/pyproject.toml</span><pre><span></span><code><span class="k">[project.entry-points.</span><span class="s2">"depsight.plugins"</span><span class="k">]</span>
+<span class="n">npm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"depsight_npm.plugin:NpmPlugin"</span>
+</code></pre></div>
+<h4 id="plugin-discovery">Plugin Discovery</h4>
+<p>At startup, the application queries the entry point group and builds a name-to-class registry. Python's <code>importlib.metadata</code> module provides <code>entry_points()</code> for this purpose. Wrapping the query in a dedicated <code>discover_plugins()</code> function is good practice because it centralises the discovery logic and lets the rest of the application work with a simple dictionary.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">importlib.metadata</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">discover_plugins</span><span class="p">(</span><span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"depsight"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the full plugin registry from entry points.</span>
+
+<span class="sd">    All plugins (built-in and third-party) are discovered via the</span>
+<span class="sd">    `&lt;app_name&gt;.plugins` entry-point group declared in `pyproject.toml`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    app_name - Application name used to look up the entry-point group (e.g. `"depsight"`).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str, type]</span>
+<span class="sd">        A mapping of plugin name → plugin class.</span>
+<span class="sd">    """</span>
+    <span class="n">registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">entry_points</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">entry_points</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">app_name</span><span class="si">}</span><span class="s2">.plugins"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span> <span class="n">entry_points</span><span class="p">:</span>
+        <span class="n">plugin_cls</span> <span class="o">=</span> <span class="n">ep</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="n">registry</span><span class="p">[</span><span class="n">ep</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_cls</span>
+    <span class="k">return</span> <span class="n">registry</span>
+</code></pre></div>
+<p>The function iterates over every entry point in the group, calls <code>load()</code> to import the class, and stores it under its declared name. The result is a flat dictionary of all available plugins, both internal and external, ready for the <code>PluginFactory</code> to look up by name.</p>
+<pre class="mermaid"><code>flowchart LR
+    TOML["pyproject.toml&lt;br/&gt;entry-points"]
+    EP["importlib.metadata&lt;br/&gt;entry_points()"]
+    REG["Plugin Registry&lt;br/&gt;{name → class}"]
+    FAC["PluginFactory"]
+
+    TOML --&gt;|"installed package"| EP
+    EP --&gt;|"load()"| REG
+    REG --&gt;|"lookup"| FAC</code></pre>
+<h4 id="plugin-contract">Plugin Contract</h4>
+<p>Every plugin must satisfy a contract so the application can call it uniformly. Depsight defines this contract as an <strong>Abstract Base Class</strong> (ABC). Subclasses must implement <code>name</code> and <code>collect</code>. Otherwise, the Python interpreter will raise a <code>TypeError</code> at instantiation time if either is missing. The <code>export</code> method has a shared concrete implementation in <code>BasePlugin</code> that all plugins inherit for free:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BasePlugin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="n">dependencies</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Dependency</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<h3 id="dataclass-pattern">Dataclass Pattern</h3>
+<p>The <a href="https://docs.python.org/3/library/dataclasses.html"><code>dataclasses</code></a> module is part of the Python standard library since Python 3.7. The <code>@dataclass</code> decorator auto-generates <code>__init__</code>, <code>__repr__</code>, and <code>__eq__</code> from type annotations, eliminating boilerplate while keeping the structure explicit and type-checked. Compared to plain Python dictionaries <code>{}</code>, a dataclass enforces a fixed schema at construction time. A typo in any field name raises a <code>TypeError</code> immediately instead of silently creating a new key, and type checkers like <code>mypy</code> can verify field access statically.</p>
+<p>Depsight uses a dataclass to define <code>Dependency</code>, the shared schema that all plugins produce and all command handlers consume. Each plugin's <code>collect()</code> method parses a lockfile and returns a <code>list[Dependency]</code>, giving the rest of the codebase a single, predictable type to work with regardless of which package manager produced the data.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dependency</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>                          <span class="c1"># Package or extension identifier, e.g. "click"</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>         <span class="c1"># Resolved version from the lockfile, e.g. "8.3.1"</span>
+    <span class="n">constraint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>      <span class="c1"># Version specifier from the manifest, e.g. "&gt;=8.1.7"</span>
+    <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>       <span class="c1"># Which plugin discovered it, e.g. "uv"</span>
+    <span class="n">registry</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>        <span class="c1"># Package registry URL, e.g. "https://pypi.org/simple"</span>
+    <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>            <span class="c1"># Absolute path to the source file</span>
+    <span class="n">category</span><span class="p">:</span> <span class="n">packageType</span> <span class="o">=</span> <span class="s2">"prod"</span>     <span class="c1"># "dev" or "prod"</span>
+    <span class="n">is_transitive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>        <span class="c1"># True when the dependency is indirect (not declared by the project)</span>
+</code></pre></div>
+<p>Furtheremore, <a href="https://docs.pydantic.dev/">Pydantic</a> models are a popular alternative that add runtime validation and coercion, making them the standard choice for API frameworks like FastAPI where input data is untrusted. Dataclasses are the lighter option when the data originates from trusted internal code and no validation layer is needed.</p>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+</body>
+</html>
