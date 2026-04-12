@@ -23,6 +23,10 @@ on:
         default: false
         type: boolean
 
+permissions:
+  actions: read
+  contents: read
+  
 jobs:
   parse-version:
     runs-on: ubuntu-latest
