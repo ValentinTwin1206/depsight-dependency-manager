@@ -109,7 +109,7 @@ RUN uv sync --frozen --no-dev --no-editable
 !!! tip "Layer Caching"
     Splitting `uv sync` into two steps — dependencies first, then the project — means that a source-only change rebuilds only the last layer. This significantly speeds up iterative builds during development.
 
-##### Final Stage
+##### Runtime Stage
 
 The final stage starts from a fresh `python:3.12-slim` image and copies only what is needed at runtime.
 
@@ -121,7 +121,10 @@ WORKDIR /depsight
 # Create non-root user
 ARG USER_ID=1000
 ARG USER_NAME=depsight
-RUN groupadd -g ${USER_ID} ${USER_NAME} && \
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd -g ${USER_ID} ${USER_NAME} && \
     useradd -u ${USER_ID} -g ${USER_NAME} -m -s /bin/bash ${USER_NAME}
 
 # Copy the virtual environment ONLY
