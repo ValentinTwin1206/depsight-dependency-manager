@@ -5,9 +5,8 @@ on:
     types: [published]
 
 permissions:
-  contents: write        # Required for managing releases/tags
-  security-events: write # REQUIRED for the called Trivy scan to upload results
   actions: read
+  contents: write
   
 jobs:
   verify-tag:

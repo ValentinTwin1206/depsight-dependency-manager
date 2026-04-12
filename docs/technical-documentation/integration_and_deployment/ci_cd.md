@@ -95,14 +95,16 @@ flowchart LR
     V["Verify version"]
     B["Lint, test & build wheel"]
     A["Upload artifact"]
+    FG["Filesystem vulnerability gate\n(source + deps + secrets)"]
     D["Build Docker image"]
-    T["Trivy vulnerability scan"]
+    IG["Container vulnerability gate\n(OS + libraries)"]
     P["Publish to PyPI"]
     PD["Push Docker image"]
 
     V --> B --> A
-    B --> D --> T
-    B --> P --> PD
+    B --> FG --> D --> IG
+    IG --> P
+    IG --> PD
   end
 
   PR -- "is_release: false" --> V
@@ -124,15 +126,15 @@ The workflow accepts the following inputs and secrets:
 
 ---
 
-## Build and Publish Steps
+## Build and Publish Pipeline
 
 ### Version Verification
 
-Before any build work begins, the workflow compares the `depsight_version` input against the version declared in `pyproject.toml`. If they do not match, the pipeline fails immediately. This prevents accidental releases with mismatched metadata.
+The workflow compares the `depsight_version` input against the version in `pyproject.toml` and fails immediately on a mismatch, preventing releases with inconsistent metadata.
 
-### Building the Wheel
+### Lint, Test and Build Wheel
 
-The Depsight wheel is built inside the same [DevContainer](../development/dev-environment.md) that is used for local development. The `devcontainers/ci` action spins up the container image defined in `.devcontainer/devcontainer.json` on the GitHub runner, ensuring the CI environment is identical to the local development setup. Inside this container the step runs the full quality pipeline including linting, type checking, and functional tests. The package build is only executed if everything passes.
+The wheel is built inside the same [DevContainer](../development/dev-environment.md) used for local development. The `devcontainers/ci` action spins up the container defined in `.devcontainer/devcontainer.json`, ensuring the CI environment is identical to the local setup. Inside the container the step verifies lockfile integrity, activates the virtual environment, runs the full quality pipeline (linting, type checking, tests), and only then builds the wheel.
 
 ```yaml
 - name: Lint, test & build wheel
@@ -148,9 +150,9 @@ The Depsight wheel is built inside the same [DevContainer](../development/dev-en
       uv build
 ```
 
-### Uploading as a Workflow Artifact
+### Upload Wheel Artifact
 
-When `upload_artifact` is set to `true` in the dispatch inputs, the wheel is attached to the workflow run with a 14-day retention period. This is useful for testing a pre-release build without publishing it to PyPI.
+When `upload_artifact` is `true`, the wheel is attached to the workflow run with a 14-day retention period. This is useful for validating a pre-release build without publishing to PyPI.
 
 ```yaml
 - name: Provide wheel as workflow artifact
@@ -163,75 +165,26 @@ When `upload_artifact` is set to `true` in the dispatch inputs, the wheel is att
     if-no-files-found: error
 ```
 
-### Publishing to PyPI
+### Filesystem Vulnerability Gate
 
-On release builds (`is_release: true`), the wheel is published to PyPI using `uv publish`. The `uv build` step runs inside the DevContainer, but the publish step runs directly on the bare GitHub runner where `uv` is not pre-installed. The [`astral-sh/setup-uv`](https://github.com/astral-sh/setup-uv) action installs the same `uv` version that is pinned via the `uv_version` input, keeping the toolchain consistent. The `PYPI_TOKEN` repository secret is passed to `uv publish` via the `UV_PUBLISH_TOKEN` environment variable.
-
-```yaml
-- name: Install uv
-  if: ${{ inputs.is_release }}
-  uses: astral-sh/setup-uv@v5
-  with:
-    version: ${{ inputs.uv_version }}
-
-- name: Upload wheel to PyPI
-  if: ${{ inputs.is_release }}
-  env:
-    UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-  run: uv publish
-```
-
-### Scanning the Docker Image with Trivy
-
-On every build, the workflow scans the locally-built Docker image for known vulnerabilities using [Trivy](https://github.com/aquasecurity/trivy), an open-source container and artifact scanner by Aqua Security. The scan targets OS packages and application libraries, and is configured to report only `CRITICAL` and `HIGH` severity issues that have a known fix available. Results are written as a [SARIF](https://sarifweb.azurewebsites.net/) file and uploaded to the repository's **Security → Code scanning alerts** tab via the CodeQL upload action, giving maintainers a centralised view of vulnerabilities directly inside GitHub.
+Immediately after the wheel is built, a Trivy filesystem scan checks the repository for `CRITICAL` Python dependency vulnerabilities and leaked secrets. If anything is found the pipeline fails before both the wheel and container image are published.
 
 ```yaml
-- name: Run Trivy vulnerability scan
+- name: Filesystem vulnerability gate (block on CRITICAL)
   uses: aquasecurity/trivy-action@master
   with:
-    image-ref: "${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}"
-    format: "sarif"
-    output: "trivy-results.sarif"
-    exit-code: "0"
+    scan-type: "fs"
+    scan-ref: "."
+    format: "table"
+    exit-code: "1"
     ignore-unfixed: true
-    vuln-type: "os,library"
-    severity: "CRITICAL,HIGH"
-
-- name: Upload Trivy scan to GitHub Security tab
-  if: ${{ always() }}
-  uses: github/codeql-action/upload-sarif@v3
-  with:
-    sarif_file: "trivy-results.sarif"
+    scanners: "vuln,secret"
+    severity: "CRITICAL"
 ```
 
-### Setting Up Buildx
+### Build Docker Image
 
-[Docker Buildx](https://docs.docker.com/build/buildx/) is a CLI plugin that extends `docker build` with BuildKit features such as multi-platform builds and advanced caching. The workflow initialises it on every run so the Docker image build step can execute regardless of whether this is a release.
-
-```yaml
-- name: Set up Docker Buildx
-  uses: docker/setup-buildx-action@v3
-```
-
-### Authenticating with Docker Hub
-
-The workflow authenticates to Docker Hub using a username stored as a repository variable and a Personal Access Token (PAT) stored as a repository secret.
-
-```yaml
-- name: Log in to Docker Hub
-  if: ${{ inputs.is_release }}
-  uses: docker/login-action@v3
-  with:
-    username: ${{ vars.DOCKER_USERNAME }}
-    password: ${{ secrets.DOCKER_PAT }}
-```
-
-!!! info "Docker Hub Credentials"
-    `DOCKER_USERNAME` is configured as a repository **variable** and `DOCKER_PAT` as a repository **secret**. The PAT requires the **Read & Write** permission scope for the target repository on Docker Hub.
-
-### Building the Docker Image
-
-The Docker image is built on every workflow run — not just releases — so that build failures are caught early. The `load: true` option imports the image into the local Docker daemon without pushing it to a registry. The Python and `uv` versions are forwarded as build arguments so the image matches the versions used in the CI test environment. Two tags are applied: the exact release version and `latest`.
+[Docker Buildx](https://docs.docker.com/build/buildx/) is initialised on every run so the image build can use BuildKit features. The image is built on every workflow run so that `Dockerfile` issues are caught early. The `load: true` option imports the image into the local daemon without pushing. Python and `uv` versions are forwarded as build arguments to match the CI test environment. Two tags are applied: the exact version and `latest`.
 
 ```yaml
 - name: Set up Docker Buildx
@@ -250,11 +203,56 @@ The Docker image is built on every workflow run — not just releases — so tha
       ${{ vars.DOCKER_REPOSITORY }}:latest
 ```
 
-### Pushing the Docker Image
+### Container Vulnerability Gate
 
-On release builds (`is_release: true`), the image is pushed to Docker Hub in a separate step after authenticating. Keeping the push separate from the build ensures that every PR and dispatch run validates the Dockerfile, while only tagged releases are published.
+After the image is built, a Trivy image scan checks the full container inclduing OS packages and installed Python libraries for `CRITICAL` vulnerabilities. If any unfixed critical CVE is found the pipeline fails and no artifacts are published.
 
 ```yaml
+- name: Container vulnerability gate (block on CRITICAL)
+  uses: aquasecurity/trivy-action@master
+  with:
+    image-ref: "${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}"
+    format: "table"
+    exit-code: "1"
+    ignore-unfixed: true
+    vuln-type: "os,library"
+    scanners: "vuln"
+    severity: "CRITICAL"
+```
+
+!!! note "Two gates, two artifacts"
+    Both vulnerability gates run unconditionally on every build to ensure neither the wheel nor the image is published with known critical vulnerabilities. Continuous monitoring with SARIF upload is handled separately by the [Security Pipeline](#security-pipeline).
+
+### Publish Wheel to PyPI (release-only)
+ 
+Triggered only on [release events](#on-release), this step publishes the Depsight wheel to [PyPI](https://pypi.org). The `uv build` step runs inside the DevContainer, but `uv publish` runs on the bare GitHub runner where `uv` is not pre-installed. The [`astral-sh/setup-uv`](https://github.com/astral-sh/setup-uv) action installs the pinned version first, and the `PYPI_TOKEN` secret is passed via `UV_PUBLISH_TOKEN`.
+
+```yaml
+- name: Install uv
+  if: ${{ inputs.is_release }}
+  uses: astral-sh/setup-uv@v5
+  with:
+    version: ${{ inputs.uv_version }}
+
+- name: Upload wheel to PyPI
+  if: ${{ inputs.is_release }}
+  env:
+    UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+  run: uv publish
+```
+
+### Push Docker Image (release-only)
+
+Triggered only on [release events](#on-release), this step pushes the Depsight image to [Docker Hub](https://hub.docker.com). The workflow first authenticates using a username stored as a repository variable and a PAT stored as a repository secret. Keeping the push separate from the build ensures every PR and dispatch run still validates the `Dockerfile` while only tagged releases are published.
+
+```yaml
+- name: Log in to Docker Hub
+  if: ${{ inputs.is_release }}
+  uses: docker/login-action@v3
+  with:
+    username: ${{ vars.DOCKER_USERNAME }}
+    password: ${{ secrets.DOCKER_PAT }}
+
 - name: Push Docker image
   if: ${{ inputs.is_release }}
   uses: docker/build-push-action@v6
@@ -268,3 +266,135 @@ On release builds (`is_release: true`), the image is pushed to Docker Hub in a s
       ${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}
       ${{ vars.DOCKER_REPOSITORY }}:latest
 ```
+
+!!! info "Docker Hub Credentials"
+    `DOCKER_USERNAME` is configured as a repository **variable** and `DOCKER_PAT` as a repository **secret**. The PAT requires the **Read & Write** permission scope for the target repository on Docker Hub.
+
+---
+
+## Security Pipeline
+
+Depsight uses a two-layer security model: continuous vulnerability monitoring via a dedicated workflow, and blocking vulnerability gates inside the build pipeline.
+
+### Vulnerability Monitoring
+
+The `trivy.yml` workflow runs independently of the build pipeline. It performs two scans — a **filesystem scan** of the repository source and an **image scan** of a locally built Docker image (never pushed). Both scans always render findings as a formatted table in the Actions log. In addition, SARIF reports are generated and uploaded to the Security tab for most triggers:
+
+| Trigger | Console output | SARIF | Uploaded to Security tab |
+|---|---|---|---|
+| `push` to `main` | Yes | Yes | Yes |
+| `pull_request` to `main` | Yes | Yes | Yes |
+| `schedule` (weekly) | Yes | Yes | Yes |
+| `workflow_dispatch` on `main` | Yes | Yes | Yes |
+| `workflow_dispatch` on any other branch | Yes | No | No |
+
+The console scans run unconditionally on every trigger, giving immediate visibility in the Actions log. When SARIF output is also enabled, results are uploaded to the repository's Security tab via the CodeQL upload action (see [section below](#github-security-tab)).
+
+#### Filesystem Scan
+
+The filesystem scan (`trivy fs .`) checks the repository source for Python dependency vulnerabilities and leaked secrets. It runs before the Docker image is built, providing fast feedback without waiting for a container build.
+
+The console step runs unconditionally on every trigger and renders findings as a formatted table directly in the Actions log.
+
+```yaml
+- name: Trivy filesystem scan (console)
+  uses: aquasecurity/trivy-action@master
+  with:
+    scan-type: "fs"
+    scan-ref: "."
+    format: "table"
+    exit-code: "0"
+    ignore-unfixed: true
+    scanners: "vuln,secret"
+    severity: "CRITICAL,HIGH"
+```
+
+The SARIF step runs conditionally — only on pushes, pull requests, scheduled runs, and manual dispatches targeting `main`. It writes findings to a SARIF file instead of the log.
+
+```yaml
+- name: Trivy filesystem scan (SARIF)
+  if: ${{ github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' }}
+  uses: aquasecurity/trivy-action@master
+  with:
+    scan-type: "fs"
+    scan-ref: "."
+    format: "sarif"
+    output: "trivy-fs-results.sarif"
+    exit-code: "0"
+    ignore-unfixed: true
+    scanners: "vuln,secret"
+    severity: "CRITICAL,HIGH"
+```
+
+The upload step submits the SARIF file to GitHub under the `trivy-filesystem` category, making findings visible in **Security → Code scanning** (see [GitHub Security Tab](#github-security-tab)).
+
+```yaml
+- name: Upload filesystem scan results to GitHub Security tab
+  if: ${{ always() && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main') }}
+  uses: github/codeql-action/upload-sarif@v4
+  with:
+    sarif_file: "trivy-fs-results.sarif"
+    category: "trivy-filesystem"
+```
+
+#### Image Scan
+
+The image scan targets the locally built Docker image and checks OS packages and installed Python libraries for vulnerabilities. It runs after the Docker image is built, complementing the filesystem scan with OS-level coverage.
+
+The console step runs unconditionally on every trigger and renders findings as a formatted table in the Actions log.
+
+```yaml
+- name: Trivy image scan (console)
+  uses: aquasecurity/trivy-action@master
+  with:
+    image-ref: "${{ vars.DOCKER_REPOSITORY }}:${{ github.sha }}"
+    format: "table"
+    exit-code: "0"
+    ignore-unfixed: true
+    vuln-type: "os,library"
+    scanners: "vuln"
+    severity: "CRITICAL,HIGH"
+```
+
+The SARIF step applies the same conditional logic as the filesystem scan — it only runs when results should be tracked in the Security tab.
+
+```yaml
+- name: Trivy image scan (SARIF)
+  if: ${{ github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' }}
+  uses: aquasecurity/trivy-action@master
+  with:
+    image-ref: "${{ vars.DOCKER_REPOSITORY }}:${{ github.sha }}"
+    format: "sarif"
+    output: "trivy-image-results.sarif"
+    exit-code: "0"
+    ignore-unfixed: true
+    vuln-type: "os,library"
+    scanners: "vuln"
+    severity: "CRITICAL,HIGH"
+```
+
+The upload step submits findings under the `trivy-image` category, keeping container vulnerabilities distinct from filesystem findings in the Security tab.
+
+```yaml
+- name: Upload image scan results to GitHub Security tab
+  if: ${{ always() && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main') }}
+  uses: github/codeql-action/upload-sarif@v4
+  with:
+    sarif_file: "trivy-image-results.sarif"
+    category: "trivy-image"
+```
+
+### GitHub Security Tab
+
+Once a SARIF file is uploaded via the `github/codeql-action/upload-sarif` action, GitHub parses it and surfaces each finding as a **code scanning alert** under **Security → Code scanning**. Alerts are deduplicated across scan runs and tracked per branch, so a vulnerability first detected on `main` will show as also present on any branch where it persists.
+
+![GitHub Security Tab — Code scanning alerts](../../images/gh_security_tab.png)
+
+Each alert includes the CVE identifier, the affected package, the installed and fixed versions, the severity rating, the detecting tool (Trivy), and the branches where the issue is active. Alerts remain open until the vulnerability is resolved or explicitly dismissed, providing a persistent audit trail.
+
+![CVE alert detail view](../../images/cve_alert.png)
+
+!!! info "Resolving the CVE"
+    The runtime stage of the `Dockerfile` initially did not run `apt-get update && apt-get upgrade`, leaving OS packages at the version baked into the base image. Adding these two commands to the [runtime](./containerization.md#runtime-stage) stage ensured that the latest security patches were applied during the image build, which resolved the CVE.
+
+The two scan categories (`trivy-filesystem` and `trivy-image`) are tracked independently, so findings from Python dependency CVEs and OS-level vulnerabilities are separated and can be filtered individually in the Security tab.
