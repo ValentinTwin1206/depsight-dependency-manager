@@ -1,4 +1,4 @@
-# # # # # # # #
+#
 # BUILD STAGE
 # # # # # # # #
 ARG PYTHON_VERSION="3.12"
@@ -22,8 +22,8 @@ COPY README.md ./
 # --no-editable ensures the code is physically moved into site-packages
 RUN uv sync --frozen --no-dev --no-editable
 
-# # # # # # # #
-# FINAL STAGE
+#
+# RUNTIME STAGE
 # # # # # # # #
 FROM python:${PYTHON_VERSION}-slim
 
@@ -32,7 +32,10 @@ WORKDIR /depsight
 # Create non-root user
 ARG USER_ID=1000
 ARG USER_NAME=depsight
-RUN groupadd -g ${USER_ID} ${USER_NAME} && \
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd -g ${USER_ID} ${USER_NAME} && \
     useradd -u ${USER_ID} -g ${USER_NAME} -m -s /bin/bash ${USER_NAME}
 
 # Copy the virtual environment ONLY
