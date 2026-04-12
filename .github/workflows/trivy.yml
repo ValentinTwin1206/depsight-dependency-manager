@@ -71,7 +71,7 @@ jobs:
           tags: |
             ${{ vars.DOCKER_REPOSITORY }}:${{ github.sha }}
 
-      - name: Trivy image scan (console)
+      - name: Trivy image scan (table)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "${{ vars.DOCKER_REPOSITORY }}:${{ github.sha }}"
@@ -82,7 +82,7 @@ jobs:
           scanners: "vuln"
           severity: "CRITICAL,HIGH"
 
-      - name: Trivy image scan (SARIF)
+      - name: Trivy image scan (sarif)
         if: ${{ github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' }}
         uses: aquasecurity/trivy-action@master
         with:
