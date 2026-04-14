@@ -1,0 +1,910 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="A modular dependency analysis framework for local workspaces" name="description"/>
+<link href="../distribution/" rel="prev"/>
+<link href="../ci_cd/" rel="next"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.6" name="generator"/>
+<title>Containerization - Depsight - Dependency Analysis Framework</title>
+<link href="../../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="orange" data-md-color-primary="orange" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#containerization">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Depsight - Dependency Analysis Framework" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Depsight - Dependency Analysis Framework">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Depsight - Dependency Analysis Framework
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Containerization
+            
+          </span>
+</div>
+</div>
+</div>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../development/project-overview/">
+          
+  
+  
+  Technical Documentation
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../instructions/getting-started/getting-started/">
+          
+  
+  
+  Instructions
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Depsight - Dependency Analysis Framework" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Depsight - Dependency Analysis Framework">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    Depsight - Dependency Analysis Framework
+  </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Technical Documentation
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Technical Documentation
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_1_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Architecture &amp; Development
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_1_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_1_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture &amp; Development
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/project-overview/">
+<span class="md-ellipsis">
+    
+  
+    Project Overview
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/dev-environment/">
+<span class="md-ellipsis">
+    
+  
+    Development Environment
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/cli-architecture/">
+<span class="md-ellipsis">
+    
+  
+    CLI Architecture
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/agentic-engineering/">
+<span class="md-ellipsis">
+    
+  
+    Agentic Engineering
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_1_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Integration &amp; Deployment
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_1_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_1_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration &amp; Deployment
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../distribution/">
+<span class="md-ellipsis">
+    
+  
+    Distribution
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-ecosystem">
+<span class="md-ellipsis">
+      
+        Container Ecosystem
+      
+    </span>
+</a>
+<nav aria-label="Container Ecosystem" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#docker-official-images">
+<span class="md-ellipsis">
+      
+        Docker Official Images
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dockerfile-architecture">
+<span class="md-ellipsis">
+      
+        Dockerfile Architecture
+      
+    </span>
+</a>
+<nav aria-label="Dockerfile Architecture" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-build-primitives">
+<span class="md-ellipsis">
+      
+        Container Build Primitives
+      
+    </span>
+</a>
+<nav aria-label="Container Build Primitives" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#arg">
+<span class="md-ellipsis">
+      
+        ARG
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#run">
+<span class="md-ellipsis">
+      
+        RUN
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#copy">
+<span class="md-ellipsis">
+      
+        COPY
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#entrypoint">
+<span class="md-ellipsis">
+      
+        ENTRYPOINT
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-stage-builds">
+<span class="md-ellipsis">
+      
+        Multi-Stage Builds
+      
+    </span>
+</a>
+<nav aria-label="Multi-Stage Builds" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#introduction">
+<span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#builder-stage">
+<span class="md-ellipsis">
+      
+        Builder Stage
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#runtime-stage">
+<span class="md-ellipsis">
+      
+        Runtime Stage
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#docker-command-primitives">
+<span class="md-ellipsis">
+      
+        Docker Command Primitives
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../ci_cd/">
+<span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Instructions
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Instructions
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/getting-started/getting-started/">
+<span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Tasks
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Tasks
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-1-write-a-npm-plugin/">
+<span class="md-ellipsis">
+    
+  
+    Task 1: Write an NPM Plugin
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-2-package-and-publish-your-plugin/">
+<span class="md-ellipsis">
+    
+  
+    Task 2: Package and Publish Your Plugin
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-3-scan-dependencies/">
+<span class="md-ellipsis">
+    
+  
+    Task 3: Scan Dependencies
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-ecosystem">
+<span class="md-ellipsis">
+      
+        Container Ecosystem
+      
+    </span>
+</a>
+<nav aria-label="Container Ecosystem" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#docker-official-images">
+<span class="md-ellipsis">
+      
+        Docker Official Images
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#dockerfile-architecture">
+<span class="md-ellipsis">
+      
+        Dockerfile Architecture
+      
+    </span>
+</a>
+<nav aria-label="Dockerfile Architecture" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-build-primitives">
+<span class="md-ellipsis">
+      
+        Container Build Primitives
+      
+    </span>
+</a>
+<nav aria-label="Container Build Primitives" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#arg">
+<span class="md-ellipsis">
+      
+        ARG
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#run">
+<span class="md-ellipsis">
+      
+        RUN
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#copy">
+<span class="md-ellipsis">
+      
+        COPY
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#entrypoint">
+<span class="md-ellipsis">
+      
+        ENTRYPOINT
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#multi-stage-builds">
+<span class="md-ellipsis">
+      
+        Multi-Stage Builds
+      
+    </span>
+</a>
+<nav aria-label="Multi-Stage Builds" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#introduction">
+<span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#builder-stage">
+<span class="md-ellipsis">
+      
+        Builder Stage
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#runtime-stage">
+<span class="md-ellipsis">
+      
+        Runtime Stage
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#docker-command-primitives">
+<span class="md-ellipsis">
+      
+        Docker Command Primitives
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="containerization">Containerization</h1>
+<h2 id="overview">Overview</h2>
+<p>Software containers have become an integral part of the modern software development landscape. They bundle an application with its runtime and dependencies into a portable unit that runs consistently across environments. Container engines such as <a href="https://www.docker.com/">Docker</a> and <a href="https://podman.io/">Podman</a> build and run these images on developer machines, CI runners, and cloud platforms.</p>
+<p>The Depsight project leverages containerization for its terminal application by packaging the CLI into a portable Open Container Initiative (OCI) image. The top-level <code>Dockerfile</code> is the build recipe that installs <code>depsight</code> into a slim Python base image, which is then published to <a href="https://hub.docker.com/">Docker Hub</a> alongside the wheel on PyPI.</p>
+<hr/>
+<h2 id="container-ecosystem">Container Ecosystem</h2>
+<h3 id="docker-official-images">Docker Official Images</h3>
+<p>Docker maintains a curated library of <a href="https://hub.docker.com/search?image_filter=official">Official Images</a> on Docker Hub. These images follow best practices, receive regular updates, and serve as trusted base layers for application containers. For Python projects, the most commonly used variants are the full <code>python:&lt;version&gt;</code> image and its leaner counterpart <code>python:&lt;version&gt;-slim</code>, which ships a minimal Debian installation with only the packages required to run CPython.</p>
+<p>Depsight builds on top of <code>python:3.12-slim</code>. The slim variant keeps the image small while still providing the standard library, <code>pip</code>, and the shared libraries needed to install compiled packages. Using an official image also means that security patches flow in through regular upstream rebuilds without requiring manual intervention.</p>
+<h3 id="dockerfile-architecture">Dockerfile Architecture</h3>
+<h4 id="container-build-primitives">Container Build Primitives</h4>
+<p>The <code>Dockerfile</code> is composed of a small set of instructions that together define the build and runtime behavior of the image. The following subsections describe the primitives used in the Depsight Dockerfile.</p>
+<h5 id="arg"><code>ARG</code></h5>
+<p><code>ARG</code> declares a build-time variable that can be passed via <code>--build-arg</code> on the command line. It only exists during the build and is not available at container runtime. Depsight uses <code>ARG</code> to parameterize the Python version, the <code>uv</code> version, and the non-root user identity so that the CI pipeline or a developer can pin exact versions without editing the Dockerfile.</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PYTHON_VERSION</code></td>
+<td><code>3.12</code></td>
+<td>Base Python image tag</td>
+</tr>
+<tr>
+<td><code>UV_VERSION</code></td>
+<td><code>0.11.1</code></td>
+<td><code>uv</code> installer version</td>
+</tr>
+<tr>
+<td><code>USER_ID</code></td>
+<td><code>1000</code></td>
+<td>UID for the non-root runtime user</td>
+</tr>
+<tr>
+<td><code>USER_NAME</code></td>
+<td><code>depsight</code></td>
+<td>Username for the non-root runtime user</td>
+</tr>
+</tbody>
+</table>
+<h5 id="run"><code>RUN</code></h5>
+<p><code>RUN</code> executes a command inside the build container and commits the resulting filesystem change as a new image layer. Each <code>RUN</code> instruction creates one layer, so chaining related commands with <code>&amp;&amp;</code> reduces layer count and image size. In the builder stage, <code>RUN</code> installs system packages, downloads <code>uv</code>, and runs <code>uv sync</code> to install dependencies and the project.</p>
+<h5 id="copy"><code>COPY</code></h5>
+<p><code>COPY</code> transfers files from the build context (or from a previous stage via <code>--from</code>) into the image. Depsight copies <code>pyproject.toml</code> and <code>uv.lock</code> before copying <code>src/</code> so that Docker can cache the dependency layer independently. In the final stage, <code>COPY --from=builder</code> selectively pulls the virtual environment and <code>uv</code> binaries without carrying over the build-time toolchain.</p>
+<h5 id="entrypoint"><code>ENTRYPOINT</code></h5>
+<p><code>ENTRYPOINT</code> sets the default executable for the container. When a user runs <code>docker run depsight:local --help</code>, Docker invokes the entrypoint binary with <code>--help</code> as its argument. Depsight sets <code>ENTRYPOINT ["depsight"]</code> so the container behaves like a direct invocation of the CLI.</p>
+<h4 id="multi-stage-builds">Multi-Stage Builds</h4>
+<h5 id="introduction">Introduction</h5>
+<p>A <a href="https://docs.docker.com/build/building/multi-stage/">multi-stage build</a> splits a Dockerfile into multiple <code>FROM</code> stages. Each stage starts from its own base image and can selectively copy artifacts from a previous stage. The main advantage is image size. Build-time tools, compilers, and intermediate files never end up in the final image because they are discarded when the stage completes.</p>
+<p>Depsight uses two stages. The <strong>builder</strong> stage starts from <code>python:3.12</code>, installs <code>uv</code> and all project dependencies, and then installs <code>depsight</code> itself. The <strong>final</strong> stage starts from a fresh <code>python:3.12-slim</code> image and copies only the runtime artifacts (the <code>uv</code> binaries, the virtual environment, and the plugin source) from the builder. This keeps build-time dependencies such as <code>curl</code> and the full source tree out of the shipped image.</p>
+<div style="zoom: 1.6;">
+<pre class="mermaid"><code>flowchart LR
+  subgraph Builder["Builder Stage"]
+    B1["Base: python:3.12"]
+    B2["Install uv"]
+    B3["Install dependencies"]
+    B4["Install Depsight"]
+  end
+
+  subgraph Final["Final Stage"]
+    F1["Base: python:3.12-slim"]
+    F2["Copy uv + .venv + src"]
+    F3["Non-root runtime user"]
+    F4["depsight entrypoint"]
+  end
+
+  B1 --&gt; B2 --&gt; B3 --&gt; B4
+  F1 --&gt; F2 --&gt; F3 --&gt; F4
+  B4 -. runtime artifacts .-&gt; F2</code></pre>
+</div>
+<h5 id="builder-stage">Builder Stage</h5>
+<p>The builder stage starts from <code>python:3.12, installs [</code>uv`](https://docs.astral.sh/uv/) via its official installer script, and then builds the project inside a virtual environment.</p>
+<div class="highlight"><pre><span></span><code><span class="k">ARG</span><span class="w"> </span><span class="nv">PYTHON_VERSION</span><span class="o">=</span><span class="m">3</span>.12
+<span class="k">FROM</span><span class="w"> </span><span class="s">python:${PYTHON_VERSION}</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+
+<span class="k">ARG</span><span class="w"> </span><span class="nv">UV_VERSION</span><span class="o">=</span><span class="m">0</span>.11.1
+<span class="k">RUN</span><span class="w"> </span>curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/<span class="si">${</span><span class="nv">UV_VERSION</span><span class="si">}</span>/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nv">UV_INSTALL_DIR</span><span class="o">=</span>/usr/local/bin<span class="w"> </span>sh
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/depsight</span>
+</code></pre></div>
+<p>Dependencies are installed <strong>before</strong> copying the source code. Docker caches each layer independently, so as long as <code>pyproject.toml</code>, <code>uv.lock</code>, <code>README.md</code> and <code>CONTRIBUTING.md</code> have not changed, the dependency layer is reused and only the final project install is re-run.</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Install dependencies (Cached Layer)</span>
+<span class="k">COPY</span><span class="w"> </span>pyproject.toml<span class="w"> </span>uv.lock<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>uv<span class="w"> </span>sync<span class="w"> </span>--frozen<span class="w"> </span>--no-dev<span class="w"> </span>--no-install-project
+
+<span class="c"># Install the actual project</span>
+<span class="k">COPY</span><span class="w"> </span>src/<span class="w"> </span>src/
+<span class="k">COPY</span><span class="w"> </span>README.md<span class="w"> </span>./
+
+<span class="c"># --no-editable ensures the code is physically moved into site-packages</span>
+<span class="k">RUN</span><span class="w"> </span>uv<span class="w"> </span>sync<span class="w"> </span>--frozen<span class="w"> </span>--no-dev<span class="w"> </span>--no-editable
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Layer Caching</p>
+<p>Splitting <code>uv sync</code> into two steps — dependencies first, then the project — means that a source-only change rebuilds only the last layer. This significantly speeds up iterative builds during development.</p>
+</div>
+<h5 id="runtime-stage">Runtime Stage</h5>
+<p>The final stage starts from a fresh <code>python:3.12-slim</code> image and copies only what is needed at runtime.</p>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">python:${PYTHON_VERSION}-slim</span>
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/depsight</span>
+
+<span class="c"># Create non-root user</span>
+<span class="k">ARG</span><span class="w"> </span><span class="nv">USER_ID</span><span class="o">=</span><span class="m">1000</span>
+<span class="k">ARG</span><span class="w"> </span><span class="nv">USER_NAME</span><span class="o">=</span>depsight
+<span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>apt-get<span class="w"> </span>upgrade<span class="w"> </span>-y<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>/var/lib/apt/lists/*<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>groupadd<span class="w"> </span>-g<span class="w"> </span><span class="si">${</span><span class="nv">USER_ID</span><span class="si">}</span><span class="w"> </span><span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>useradd<span class="w"> </span>-u<span class="w"> </span><span class="si">${</span><span class="nv">USER_ID</span><span class="si">}</span><span class="w"> </span>-g<span class="w"> </span><span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span><span class="w"> </span>-m<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span><span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span>
+
+<span class="c"># Copy the virtual environment ONLY</span>
+<span class="c"># Because we used --no-editable, the code lives inside this folder now.</span>
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>--chown<span class="o">=</span><span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span>:<span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span><span class="w"> </span>/depsight/.venv<span class="w"> </span>/depsight/.venv
+
+<span class="c"># Copy uv binaries ONLY if Depsight needs to call 'uv' commands at runtime</span>
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/usr/local/bin/uv<span class="w"> </span>/usr/local/bin/uvx<span class="w"> </span>/usr/local/bin/
+</code></pre></div>
+<p>The container runs as a <strong>non-root user</strong> (<code>depsight</code>) and exposes the CLI as its entrypoint.</p>
+<div class="highlight"><pre><span></span><code><span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/home/<span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span>/.depsight/logs<span class="w"> </span>/home/<span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span>/.depsight/data<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>chown<span class="w"> </span>-R<span class="w"> </span><span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span>:<span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span><span class="w"> </span>/depsight<span class="w"> </span>/home/<span class="si">${</span><span class="nv">USER_NAME</span><span class="si">}</span>
+
+<span class="k">USER</span><span class="w"> </span><span class="s">${USER_NAME}</span>
+
+<span class="k">ENV</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"/depsight/.venv/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+<span class="k">ENV</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="s2">"/depsight/src"</span>
+<span class="k">ENV</span><span class="w"> </span><span class="nv">PYTHONUNBUFFERED</span><span class="o">=</span><span class="m">1</span>
+
+<span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">"depsight"</span><span class="p">]</span>
+</code></pre></div>
+<hr/>
+<h3 id="docker-command-primitives">Docker Command Primitives</h3>
+<p>The <code>docker build</code> command reads the <code>Dockerfile</code> in the current directory, executes both stages, and tags the resulting image as <code>depsight:local</code>. This image exists only on the local machine and is not pushed to any registry.</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>depsight:local<span class="w"> </span>.
+</code></pre></div>
+<p>The <code>docker run</code> command creates a short-lived container from the local image. The <code>--rm</code> flag removes the container automatically after it exits. Any arguments after the image name are forwarded to the <code>depsight</code> entrypoint, so <code>--help</code> and <code>uv scan --help</code> print the CLI and subcommand usage respectively.</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>depsight:local<span class="w"> </span>--help
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>depsight:local<span class="w"> </span>uv<span class="w"> </span>scan<span class="w"> </span>--help
+</code></pre></div>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+</body>
+</html>

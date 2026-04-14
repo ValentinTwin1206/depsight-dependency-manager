@@ -1,0 +1,1255 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="A modular dependency analysis framework for local workspaces" name="description"/>
+<link href="../containerization/" rel="prev"/>
+<link href="../../../instructions/getting-started/getting-started/" rel="next"/>
+<link href="../../../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.6" name="generator"/>
+<title>CI/CD - Depsight - Dependency Analysis Framework</title>
+<link href="../../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../../../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="orange" data-md-color-primary="orange" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#cicd">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Depsight - Dependency Analysis Framework" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="Depsight - Dependency Analysis Framework">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Depsight - Dependency Analysis Framework
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              CI/CD
+            
+          </span>
+</div>
+</div>
+</div>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<nav aria-label="Tabs" class="md-tabs" data-md-component="tabs">
+<div class="md-grid">
+<ul class="md-tabs__list">
+<li class="md-tabs__item md-tabs__item--active">
+<a class="md-tabs__link" href="../../development/project-overview/">
+          
+  
+  
+  Technical Documentation
+
+        </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../instructions/getting-started/getting-started/">
+          
+  
+  
+  Instructions
+
+        </a>
+</li>
+</ul>
+</div>
+</nav>
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Depsight - Dependency Analysis Framework" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="Depsight - Dependency Analysis Framework">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    Depsight - Dependency Analysis Framework
+  </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Technical Documentation
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Technical Documentation
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--section md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_1_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Architecture &amp; Development
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_1_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_1_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture &amp; Development
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/project-overview/">
+<span class="md-ellipsis">
+    
+  
+    Project Overview
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/dev-environment/">
+<span class="md-ellipsis">
+    
+  
+    Development Environment
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/cli-architecture/">
+<span class="md-ellipsis">
+    
+  
+    CLI Architecture
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../development/agentic-engineering/">
+<span class="md-ellipsis">
+    
+  
+    Agentic Engineering
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_1_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="">
+<span class="md-ellipsis">
+    
+  
+    Integration &amp; Deployment
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_1_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_1_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Integration &amp; Deployment
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../distribution/">
+<span class="md-ellipsis">
+    
+  
+    Distribution
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../containerization/">
+<span class="md-ellipsis">
+    
+  
+    Containerization
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#github-actions-workflows">
+<span class="md-ellipsis">
+      
+        GitHub Actions Workflows
+      
+    </span>
+</a>
+<nav aria-label="GitHub Actions Workflows" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#on-pull-request">
+<span class="md-ellipsis">
+      
+        On Pull Request
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#on-dispatch">
+<span class="md-ellipsis">
+      
+        On Dispatch
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#on-release">
+<span class="md-ellipsis">
+      
+        On Release
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reusable-build-workflow">
+<span class="md-ellipsis">
+      
+        Reusable Build Workflow
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-and-publish-pipeline">
+<span class="md-ellipsis">
+      
+        Build and Publish Pipeline
+      
+    </span>
+</a>
+<nav aria-label="Build and Publish Pipeline" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#version-verification">
+<span class="md-ellipsis">
+      
+        Version Verification
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#lint-test-and-build-wheel">
+<span class="md-ellipsis">
+      
+        Lint, Test and Build Wheel
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#upload-wheel-artifact">
+<span class="md-ellipsis">
+      
+        Upload Wheel Artifact
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filesystem-vulnerability-gate">
+<span class="md-ellipsis">
+      
+        Filesystem Vulnerability Gate
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-docker-image">
+<span class="md-ellipsis">
+      
+        Build Docker Image
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-vulnerability-gate">
+<span class="md-ellipsis">
+      
+        Container Vulnerability Gate
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#publish-wheel-to-pypi-release-only">
+<span class="md-ellipsis">
+      
+        Publish Wheel to PyPI (release-only)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#push-docker-image-release-only">
+<span class="md-ellipsis">
+      
+        Push Docker Image (release-only)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-pipeline">
+<span class="md-ellipsis">
+      
+        Security Pipeline
+      
+    </span>
+</a>
+<nav aria-label="Security Pipeline" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#vulnerability-monitoring">
+<span class="md-ellipsis">
+      
+        Vulnerability Monitoring
+      
+    </span>
+</a>
+<nav aria-label="Vulnerability Monitoring" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filesystem-scan">
+<span class="md-ellipsis">
+      
+        Filesystem Scan
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#image-scan">
+<span class="md-ellipsis">
+      
+        Image Scan
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#github-security-tab">
+<span class="md-ellipsis">
+      
+        GitHub Security Tab
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Instructions
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Instructions
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_1">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/getting-started/getting-started/">
+<span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_2_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+<span class="md-ellipsis">
+    
+  
+    Tasks
+  
+
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_2_2_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_2_2">
+<span class="md-nav__icon md-icon"></span>
+            
+  
+    Tasks
+  
+
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-1-write-a-npm-plugin/">
+<span class="md-ellipsis">
+    
+  
+    Task 1: Write an NPM Plugin
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-2-package-and-publish-your-plugin/">
+<span class="md-ellipsis">
+    
+  
+    Task 2: Package and Publish Your Plugin
+  
+
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../instructions/tasks/task-3-scan-dependencies/">
+<span class="md-ellipsis">
+    
+  
+    Task 3: Scan Dependencies
+  
+
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#overview">
+<span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#github-actions-workflows">
+<span class="md-ellipsis">
+      
+        GitHub Actions Workflows
+      
+    </span>
+</a>
+<nav aria-label="GitHub Actions Workflows" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#on-pull-request">
+<span class="md-ellipsis">
+      
+        On Pull Request
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#on-dispatch">
+<span class="md-ellipsis">
+      
+        On Dispatch
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#on-release">
+<span class="md-ellipsis">
+      
+        On Release
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#reusable-build-workflow">
+<span class="md-ellipsis">
+      
+        Reusable Build Workflow
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-and-publish-pipeline">
+<span class="md-ellipsis">
+      
+        Build and Publish Pipeline
+      
+    </span>
+</a>
+<nav aria-label="Build and Publish Pipeline" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#version-verification">
+<span class="md-ellipsis">
+      
+        Version Verification
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#lint-test-and-build-wheel">
+<span class="md-ellipsis">
+      
+        Lint, Test and Build Wheel
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#upload-wheel-artifact">
+<span class="md-ellipsis">
+      
+        Upload Wheel Artifact
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filesystem-vulnerability-gate">
+<span class="md-ellipsis">
+      
+        Filesystem Vulnerability Gate
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#build-docker-image">
+<span class="md-ellipsis">
+      
+        Build Docker Image
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#container-vulnerability-gate">
+<span class="md-ellipsis">
+      
+        Container Vulnerability Gate
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#publish-wheel-to-pypi-release-only">
+<span class="md-ellipsis">
+      
+        Publish Wheel to PyPI (release-only)
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#push-docker-image-release-only">
+<span class="md-ellipsis">
+      
+        Push Docker Image (release-only)
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#security-pipeline">
+<span class="md-ellipsis">
+      
+        Security Pipeline
+      
+    </span>
+</a>
+<nav aria-label="Security Pipeline" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#vulnerability-monitoring">
+<span class="md-ellipsis">
+      
+        Vulnerability Monitoring
+      
+    </span>
+</a>
+<nav aria-label="Vulnerability Monitoring" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#filesystem-scan">
+<span class="md-ellipsis">
+      
+        Filesystem Scan
+      
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#image-scan">
+<span class="md-ellipsis">
+      
+        Image Scan
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#github-security-tab">
+<span class="md-ellipsis">
+      
+        GitHub Security Tab
+      
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<h1 id="cicd">CI/CD</h1>
+<h2 id="overview">Overview</h2>
+<p>Continuous Integration and Continuous Delivery (CI/CD) automate the steps between writing code and shipping it to users. A CI pipeline typically checks out the source, runs linters, type checkers, and tests, and then builds a distributable artifact. If all checks pass, a CD pipeline publishes the artifact to a package registry, a container registry, or both. Automating these steps eliminates manual errors, enforces quality gates on every change, and ensures that the released artifact is always built from a known-good state of the codebase.</p>
+<p>The Depsight project uses <a href="https://docs.github.com/en/actions">GitHub Actions</a> for its CI/CD pipeline. GitHub Actions is a workflow automation platform built into GitHub that executes jobs in response to repository events such as pushes, pull requests, and releases. Workflows are defined as YAML files inside the <code>.github/workflows/</code> directory and run on GitHub-hosted virtual machines. A typical <code>.github</code> folder looks like this:</p>
+<div class="highlight"><pre><span></span><code>.github/
+├── actions/            # composite actions shared across workflows
+├── scripts/            # shell or Python scripts called from run: steps
+└── workflows/
+</code></pre></div>
+<hr/>
+<h2 id="github-actions-workflows">GitHub Actions Workflows</h2>
+<p>Depsight provides three entry-point workflows that trigger the CI/CD pipeline:</p>
+<ul>
+<li><strong>On Pull Request</strong> — quality gate on every PR to <code>main</code>; lints, type-checks, tests, and builds the wheel without publishing</li>
+<li><strong>On Dispatch</strong> — manual trigger for on-demand builds; supports toolchain version selection and optional wheel artifact upload</li>
+<li><strong>On Release</strong> — fires on a published GitHub Release; publishes the wheel to PyPI and pushes the Docker image to Docker Hub</li>
+</ul>
+<p>Each responds to a different GitHub event and delegates the heavy lifting to <code>build.yml</code> via <code>workflow_call</code>. The entry points differ in how they determine version numbers, which inputs they forward, and whether they trigger a release publish.</p>
+<h3 id="on-pull-request">On Pull Request</h3>
+<p>The <code>on_pullrequest.yml</code> workflow runs automatically when a pull request is opened or updated against the <code>main</code> branch. It parses the current version from <code>pyproject.toml</code> and calls <code>build.yml</code> with <code>is_release: false</code>, which means the pipeline lints, type-checks, tests, and builds the wheel but does not publish anything. Changes to <code>README.md</code> and the <code>docs/</code> folder are excluded via <code>paths-ignore</code> so that documentation-only PRs do not trigger a full build.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+<span class="w">    </span><span class="nt">paths-ignore</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'README.md'</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'docs/**'</span>
+</code></pre></div>
+<h3 id="on-dispatch">On Dispatch</h3>
+<p>The <code>on_dispatch.yml</code> workflow is triggered manually from the GitHub Actions UI. It exposes inputs that let the operator optionally override the Python version and the <code>uv</code> version. The Python version defaults to the value in <code>.python-version</code> if left empty. Like the pull request workflow, it calls <code>build.yml</code> with <code>is_release: false</code>, so nothing is published to PyPI or Docker Hub. This workflow is useful for testing a specific configuration or producing a pre-release wheel for local validation.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">workflow_dispatch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">inputs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">depsight_version</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"Depsight</span><span class="nv"> </span><span class="s">version</span><span class="nv"> </span><span class="s">(must</span><span class="nv"> </span><span class="s">match</span><span class="nv"> </span><span class="s">pyproject.toml,</span><span class="nv"> </span><span class="s">e.g.</span><span class="nv"> </span><span class="s">1.0.0)"</span>
+<span class="w">        </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">python_version</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"Python</span><span class="nv"> </span><span class="s">version</span><span class="nv"> </span><span class="s">override</span><span class="nv"> </span><span class="s">(leave</span><span class="nv"> </span><span class="s">empty</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">.python-version)"</span>
+<span class="w">        </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="s">""</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">uv_version</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"uv</span><span class="nv"> </span><span class="s">version</span><span class="nv"> </span><span class="s">(e.g.</span><span class="nv"> </span><span class="s">0.11.1)"</span>
+<span class="w">        </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="s">"0.11.1"</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="nt">upload_artifact</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">"Upload</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">wheel</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">workflow</span><span class="nv"> </span><span class="s">artifact"</span>
+<span class="w">        </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">boolean</span>
+</code></pre></div>
+<h3 id="on-release">On Release</h3>
+<p>The <code>on_release.yml</code> workflow fires when a GitHub Release is published. It first verifies that the release tag is <a href="https://peps.python.org/pep-0440/">PEP 440</a> compliant, then calls <code>build.yml</code> with <code>is_release: true</code>. This flag enables the publish steps that upload the wheel to PyPI and push the Docker image to Docker Hub. The workflow also forwards the <code>PYPI_TOKEN</code> and <code>DOCKER_PAT</code> secrets so that the reusable workflow can authenticate with both registries.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">release</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">published</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="reusable-build-workflow">Reusable Build Workflow</h3>
+<p>The <code>build.yml</code> workflow is the single source of truth for all build, test, and publish logic. It is never triggered directly by a repository event. Instead, the three entry-point workflows call it via <code>workflow_call</code>, passing the version, toolchain pins, and the <code>is_release</code> flag that controls whether artifacts are published.</p>
+<pre class="mermaid"><code>flowchart LR
+  subgraph Triggers
+    PR["on_pullrequest.yml"]
+    DI["on_dispatch.yml"]
+    RE["on_release.yml"]
+  end
+
+  subgraph "build.yml"
+    direction TB
+    V["Verify version"]
+    B["Lint, test &amp; build wheel"]
+    A["Upload artifact"]
+    FG["Filesystem vulnerability gate\n(source + deps + secrets)"]
+    D["Build Docker image"]
+    IG["Container vulnerability gate\n(OS + libraries)"]
+    P["Publish to PyPI"]
+    PD["Push Docker image"]
+
+    V --&gt; B --&gt; A
+    B --&gt; FG --&gt; D --&gt; IG
+    IG --&gt; P
+    IG --&gt; PD
+  end
+
+  PR -- "is_release: false" --&gt; V
+  DI -- "is_release: false" --&gt; V
+  RE -- "is_release: true" --&gt; V</code></pre>
+<p>The workflow accepts the following inputs and secrets:</p>
+<table>
+<thead>
+<tr>
+<th>Input / Secret</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>is_release</code></td>
+<td>boolean</td>
+<td>Enables PyPI and Docker Hub publish steps</td>
+</tr>
+<tr>
+<td><code>uv_version</code></td>
+<td>string</td>
+<td><code>uv</code> version to install in the DevContainer</td>
+</tr>
+<tr>
+<td><code>python_version</code></td>
+<td>string</td>
+<td>Python version override — falls back to <code>.python-version</code> if omitted</td>
+</tr>
+<tr>
+<td><code>depsight_version</code></td>
+<td>string</td>
+<td>Expected version (validated against <code>pyproject.toml</code>)</td>
+</tr>
+<tr>
+<td><code>upload_artifact</code></td>
+<td>boolean</td>
+<td>Attach the wheel as a downloadable workflow artifact</td>
+</tr>
+<tr>
+<td><code>PYPI_TOKEN</code></td>
+<td>secret</td>
+<td>API token for PyPI publishing</td>
+</tr>
+<tr>
+<td><code>DOCKER_PAT</code></td>
+<td>secret</td>
+<td>Personal access token for Docker Hub</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="build-and-publish-pipeline">Build and Publish Pipeline</h2>
+<h3 id="version-verification">Version Verification</h3>
+<p>The workflow compares the <code>depsight_version</code> input against the version in <code>pyproject.toml</code> and fails immediately on a mismatch, preventing releases with inconsistent metadata.</p>
+<h3 id="lint-test-and-build-wheel">Lint, Test and Build Wheel</h3>
+<p>The wheel is built inside the same <a href="../../development/dev-environment/">DevContainer</a> used for local development. The <code>devcontainers/ci</code> action spins up the container defined in <code>.devcontainer/devcontainer.json</code>, ensuring the CI environment is identical to the local setup. Inside the container the step verifies lockfile integrity, activates the virtual environment, runs the full quality pipeline (linting, type checking, tests), and only then builds the wheel.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lint, test &amp; build wheel</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">devcontainers/ci@v0.3</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">configFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.devcontainer/devcontainer.json</span>
+<span class="w">    </span><span class="nt">runCmd</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">set -e</span>
+<span class="w">      </span><span class="no">source .venv/bin/activate</span>
+<span class="w">      </span><span class="no">ruff check src/ tests/</span>
+<span class="w">      </span><span class="no">mypy src/</span>
+<span class="w">      </span><span class="no">python -m pytest tests/ -v --tb=short</span>
+<span class="w">      </span><span class="no">uv build</span>
+</code></pre></div>
+<h3 id="upload-wheel-artifact">Upload Wheel Artifact</h3>
+<p>When <code>upload_artifact</code> is <code>true</code>, the wheel is attached to the workflow run with a 14-day retention period. This is useful for validating a pre-release build without publishing to PyPI.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Provide wheel as workflow artifact</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ inputs.upload_artifact }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v4</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">depsight-wheel</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dist/*.whl</span>
+<span class="w">    </span><span class="nt">retention-days</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">14</span>
+<span class="w">    </span><span class="nt">if-no-files-found</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">error</span>
+</code></pre></div>
+<h3 id="filesystem-vulnerability-gate">Filesystem Vulnerability Gate</h3>
+<p>Immediately after the wheel is built, a Trivy filesystem scan checks the repository for <code>CRITICAL</code> Python dependency vulnerabilities and leaked secrets. If anything is found the pipeline fails before both the wheel and container image are published.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Filesystem vulnerability gate (block on CRITICAL)</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aquasecurity/trivy-action@master</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">scan-type</span><span class="p">:</span><span class="w"> </span><span class="s">"fs"</span>
+<span class="w">    </span><span class="nt">scan-ref</span><span class="p">:</span><span class="w"> </span><span class="s">"."</span>
+<span class="w">    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"table"</span>
+<span class="w">    </span><span class="nt">exit-code</span><span class="p">:</span><span class="w"> </span><span class="s">"1"</span>
+<span class="w">    </span><span class="nt">ignore-unfixed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">scanners</span><span class="p">:</span><span class="w"> </span><span class="s">"vuln,secret"</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="s">"CRITICAL"</span>
+</code></pre></div>
+<h3 id="build-docker-image">Build Docker Image</h3>
+<p><a href="https://docs.docker.com/build/buildx/">Docker Buildx</a> is initialised on every run so the image build can use BuildKit features. The image is built on every workflow run so that <code>Dockerfile</code> issues are caught early. The <code>load: true</code> option imports the image into the local daemon without pushing. Python and <code>uv</code> versions are forwarded as build arguments to match the CI test environment. Two tags are applied: the exact version and <code>latest</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set up Docker Buildx</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/setup-buildx-action@v3</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build Docker image</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/build-push-action@v6</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">    </span><span class="nt">load</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">build-args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">PYTHON_VERSION=${{ inputs.python_version }}</span>
+<span class="w">      </span><span class="no">UV_VERSION=${{ inputs.uv_version }}</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}</span>
+<span class="w">      </span><span class="no">${{ vars.DOCKER_REPOSITORY }}:latest</span>
+</code></pre></div>
+<h3 id="container-vulnerability-gate">Container Vulnerability Gate</h3>
+<p>After the image is built, a Trivy image scan checks the full container inclduing OS packages and installed Python libraries for <code>CRITICAL</code> vulnerabilities. If any unfixed critical CVE is found the pipeline fails and no artifacts are published.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Container vulnerability gate (block on CRITICAL)</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aquasecurity/trivy-action@master</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image-ref</span><span class="p">:</span><span class="w"> </span><span class="s">"${{</span><span class="nv"> </span><span class="s">vars.DOCKER_REPOSITORY</span><span class="nv"> </span><span class="s">}}:${{</span><span class="nv"> </span><span class="s">inputs.depsight_version</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"table"</span>
+<span class="w">    </span><span class="nt">exit-code</span><span class="p">:</span><span class="w"> </span><span class="s">"1"</span>
+<span class="w">    </span><span class="nt">ignore-unfixed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">vuln-type</span><span class="p">:</span><span class="w"> </span><span class="s">"os,library"</span>
+<span class="w">    </span><span class="nt">scanners</span><span class="p">:</span><span class="w"> </span><span class="s">"vuln"</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="s">"CRITICAL"</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Two gates, two artifacts</p>
+<p>Both vulnerability gates run unconditionally on every build to ensure neither the wheel nor the image is published with known critical vulnerabilities. Continuous monitoring with SARIF upload is handled separately by the <a href="#security-pipeline">Security Pipeline</a>.</p>
+</div>
+<h3 id="publish-wheel-to-pypi-release-only">Publish Wheel to PyPI (release-only)</h3>
+<p>Triggered only on <a href="#on-release">release events</a>, this step publishes the Depsight wheel to <a href="https://pypi.org">PyPI</a>. The <code>uv build</code> step runs inside the DevContainer, but <code>uv publish</code> runs on the bare GitHub runner where <code>uv</code> is not pre-installed. The <a href="https://github.com/astral-sh/setup-uv"><code>astral-sh/setup-uv</code></a> action installs the pinned version first, and the <code>PYPI_TOKEN</code> secret is passed via <code>UV_PUBLISH_TOKEN</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install uv</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ inputs.is_release }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">astral-sh/setup-uv@v5</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ inputs.uv_version }}</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload wheel to PyPI</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ inputs.is_release }}</span>
+<span class="w">  </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">UV_PUBLISH_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.PYPI_TOKEN }}</span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uv publish</span>
+</code></pre></div>
+<h3 id="push-docker-image-release-only">Push Docker Image (release-only)</h3>
+<p>Triggered only on <a href="#on-release">release events</a>, this step pushes the Depsight image to <a href="https://hub.docker.com">Docker Hub</a>. The workflow first authenticates using a username stored as a repository variable and a PAT stored as a repository secret. Keeping the push separate from the build ensures every PR and dispatch run still validates the <code>Dockerfile</code> while only tagged releases are published.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Log in to Docker Hub</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ inputs.is_release }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/login-action@v3</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ vars.DOCKER_USERNAME }}</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.DOCKER_PAT }}</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Push Docker image</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ inputs.is_release }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/build-push-action@v6</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">    </span><span class="nt">push</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">build-args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">PYTHON_VERSION=${{ inputs.python_version }}</span>
+<span class="w">      </span><span class="no">UV_VERSION=${{ inputs.uv_version }}</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">${{ vars.DOCKER_REPOSITORY }}:${{ inputs.depsight_version }}</span>
+<span class="w">      </span><span class="no">${{ vars.DOCKER_REPOSITORY }}:latest</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Docker Hub Credentials</p>
+<p><code>DOCKER_USERNAME</code> is configured as a repository <strong>variable</strong> and <code>DOCKER_PAT</code> as a repository <strong>secret</strong>. The PAT requires the <strong>Read &amp; Write</strong> permission scope for the target repository on Docker Hub.</p>
+</div>
+<hr/>
+<h2 id="security-pipeline">Security Pipeline</h2>
+<p>Depsight uses a two-layer security model: continuous vulnerability monitoring via a dedicated workflow, and blocking vulnerability gates inside the build pipeline.</p>
+<h3 id="vulnerability-monitoring">Vulnerability Monitoring</h3>
+<p>The <code>trivy.yml</code> workflow runs independently of the build pipeline. It performs two scans — a <strong>filesystem scan</strong> of the repository source and an <strong>image scan</strong> of a locally built Docker image (never pushed). Both scans always render findings as a formatted table in the Actions log. In addition, SARIF reports are generated and uploaded to the Security tab for most triggers:</p>
+<table>
+<thead>
+<tr>
+<th>Trigger</th>
+<th>Console output</th>
+<th>SARIF</th>
+<th>Uploaded to Security tab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>push</code> to <code>main</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>pull_request</code> to <code>main</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>schedule</code> (weekly)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>workflow_dispatch</code> on <code>main</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>workflow_dispatch</code> on any other branch</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>The console scans run unconditionally on every trigger, giving immediate visibility in the Actions log. When SARIF output is also enabled, results are uploaded to the repository's Security tab via the CodeQL upload action (see <a href="#github-security-tab">section below</a>).</p>
+<h4 id="filesystem-scan">Filesystem Scan</h4>
+<p>The filesystem scan (<code>trivy fs .</code>) checks the repository source for Python dependency vulnerabilities and leaked secrets. It runs before the Docker image is built, providing fast feedback without waiting for a container build.</p>
+<p>The console step runs unconditionally on every trigger and renders findings as a formatted table directly in the Actions log.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trivy filesystem scan (console)</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aquasecurity/trivy-action@master</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">scan-type</span><span class="p">:</span><span class="w"> </span><span class="s">"fs"</span>
+<span class="w">    </span><span class="nt">scan-ref</span><span class="p">:</span><span class="w"> </span><span class="s">"."</span>
+<span class="w">    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"table"</span>
+<span class="w">    </span><span class="nt">exit-code</span><span class="p">:</span><span class="w"> </span><span class="s">"0"</span>
+<span class="w">    </span><span class="nt">ignore-unfixed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">scanners</span><span class="p">:</span><span class="w"> </span><span class="s">"vuln,secret"</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="s">"CRITICAL,HIGH"</span>
+</code></pre></div>
+<p>The SARIF step runs conditionally — only on pushes, pull requests, scheduled runs, and manual dispatches targeting <code>main</code>. It writes findings to a SARIF file instead of the log.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trivy filesystem scan (SARIF)</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aquasecurity/trivy-action@master</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">scan-type</span><span class="p">:</span><span class="w"> </span><span class="s">"fs"</span>
+<span class="w">    </span><span class="nt">scan-ref</span><span class="p">:</span><span class="w"> </span><span class="s">"."</span>
+<span class="w">    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"sarif"</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">"trivy-fs-results.sarif"</span>
+<span class="w">    </span><span class="nt">exit-code</span><span class="p">:</span><span class="w"> </span><span class="s">"0"</span>
+<span class="w">    </span><span class="nt">ignore-unfixed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">scanners</span><span class="p">:</span><span class="w"> </span><span class="s">"vuln,secret"</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="s">"CRITICAL,HIGH"</span>
+</code></pre></div>
+<p>The upload step submits the SARIF file to GitHub under the <code>trivy-filesystem</code> category, making findings visible in <strong>Security → Code scanning</strong> (see <a href="#github-security-tab">GitHub Security Tab</a>).</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload filesystem scan results to GitHub Security tab</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ always() &amp;&amp; (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main') }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">github/codeql-action/upload-sarif@v4</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sarif_file</span><span class="p">:</span><span class="w"> </span><span class="s">"trivy-fs-results.sarif"</span>
+<span class="w">    </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="s">"trivy-filesystem"</span>
+</code></pre></div>
+<h4 id="image-scan">Image Scan</h4>
+<p>The image scan targets the locally built Docker image and checks OS packages and installed Python libraries for vulnerabilities. It runs after the Docker image is built, complementing the filesystem scan with OS-level coverage.</p>
+<p>The console step runs unconditionally on every trigger and renders findings as a formatted table in the Actions log.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trivy image scan (console)</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aquasecurity/trivy-action@master</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image-ref</span><span class="p">:</span><span class="w"> </span><span class="s">"${{</span><span class="nv"> </span><span class="s">vars.DOCKER_REPOSITORY</span><span class="nv"> </span><span class="s">}}:${{</span><span class="nv"> </span><span class="s">github.sha</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"table"</span>
+<span class="w">    </span><span class="nt">exit-code</span><span class="p">:</span><span class="w"> </span><span class="s">"0"</span>
+<span class="w">    </span><span class="nt">ignore-unfixed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">vuln-type</span><span class="p">:</span><span class="w"> </span><span class="s">"os,library"</span>
+<span class="w">    </span><span class="nt">scanners</span><span class="p">:</span><span class="w"> </span><span class="s">"vuln"</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="s">"CRITICAL,HIGH"</span>
+</code></pre></div>
+<p>The SARIF step applies the same conditional logic as the filesystem scan — it only runs when results should be tracked in the Security tab.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Trivy image scan (SARIF)</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main' }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aquasecurity/trivy-action@master</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image-ref</span><span class="p">:</span><span class="w"> </span><span class="s">"${{</span><span class="nv"> </span><span class="s">vars.DOCKER_REPOSITORY</span><span class="nv"> </span><span class="s">}}:${{</span><span class="nv"> </span><span class="s">github.sha</span><span class="nv"> </span><span class="s">}}"</span>
+<span class="w">    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">"sarif"</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">"trivy-image-results.sarif"</span>
+<span class="w">    </span><span class="nt">exit-code</span><span class="p">:</span><span class="w"> </span><span class="s">"0"</span>
+<span class="w">    </span><span class="nt">ignore-unfixed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">vuln-type</span><span class="p">:</span><span class="w"> </span><span class="s">"os,library"</span>
+<span class="w">    </span><span class="nt">scanners</span><span class="p">:</span><span class="w"> </span><span class="s">"vuln"</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="s">"CRITICAL,HIGH"</span>
+</code></pre></div>
+<p>The upload step submits findings under the <code>trivy-image</code> category, keeping container vulnerabilities distinct from filesystem findings in the Security tab.</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload image scan results to GitHub Security tab</span>
+<span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ always() &amp;&amp; (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main') }}</span>
+<span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">github/codeql-action/upload-sarif@v4</span>
+<span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">sarif_file</span><span class="p">:</span><span class="w"> </span><span class="s">"trivy-image-results.sarif"</span>
+<span class="w">    </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="s">"trivy-image"</span>
+</code></pre></div>
+<h3 id="github-security-tab">GitHub Security Tab</h3>
+<p>Once a SARIF file is uploaded via the <code>github/codeql-action/upload-sarif</code> action, GitHub parses it and surfaces each finding as a <strong>code scanning alert</strong> under <strong>Security → Code scanning</strong>. Alerts are deduplicated across scan runs and tracked per branch, so a vulnerability first detected on <code>main</code> will show as also present on any branch where it persists.</p>
+<p><img alt="GitHub Security Tab — Code scanning alerts" src="../../../images/gh_security_tab.png"/></p>
+<p>Each alert includes the CVE identifier, the affected package, the installed and fixed versions, the severity rating, the detecting tool (Trivy), and the branches where the issue is active. Alerts remain open until the vulnerability is resolved or explicitly dismissed, providing a persistent audit trail.</p>
+<p><img alt="CVE alert detail view" src="../../../images/cve_alert.png"/></p>
+<div class="admonition info">
+<p class="admonition-title">Resolving the CVE</p>
+<p>The runtime stage of the <code>Dockerfile</code> initially did not run <code>apt-get update &amp;&amp; apt-get upgrade</code>, leaving OS packages at the version baked into the base image. Adding these two commands to the <a href="../containerization/#runtime-stage">runtime</a> stage ensured that the latest security patches were applied during the image build, which resolved the CVE.</p>
+</div>
+<p>The two scan categories (<code>trivy-filesystem</code> and <code>trivy-image</code>) are tracked independently, so findings from Python dependency CVEs and OS-level vulnerabilities are separated and can be filtered individually in the Security tab.</p>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.sections", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+</body>
+</html>
