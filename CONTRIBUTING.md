@@ -70,29 +70,6 @@
   mypy src/
   ```
 
-### Build Docs
-
-- Open a terminal inside the DevContainer
-- Optionally, activate the virtual environment:
-
-  ```bash
-  source .venv/bin/activate
-  ```
-
-- Serve the documentation locally with live reload:
-
-  ```bash
-  mkdocs serve
-  ```
-
-  The site will be available at `http://127.0.0.1:8000`.
-
-- Alternatively, build the static site as a `site/` directory:
-
-  ```bash
-  mkdocs build
-  ```
-
 ## Release
 
 ### Pre-release

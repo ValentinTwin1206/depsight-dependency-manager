@@ -30,17 +30,12 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.4",
 ]
-docs = [
-    "mkdocs>=1.6",
-    "mkdocs-material>=9.5",
-    "mkdocs-mermaid2-plugin>=1.1",
-]
 
 [project.scripts]
 depsight = "depsight.cli:main"
 
 [project.urls]
-Homepage = "https://valentintwin1206.github.io/depsight-dependency-manager/"
+Homepage = "https://github.com/ValentinTwin1206/depsight-dependency-manager"
 Repository = "https://github.com/ValentinTwin1206/depsight-dependency-manager"
 Issues = "https://github.com/ValentinTwin1206/depsight-dependency-manager/issues"
 

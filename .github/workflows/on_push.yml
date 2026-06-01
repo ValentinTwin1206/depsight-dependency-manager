@@ -11,8 +11,6 @@ on:
       - 'LICENSE'
       - 'README.md'
       - 'SECURITY.md'
-      - 'docs/**'
-      - 'mkdocs.yml'
 
 permissions:
   actions: read

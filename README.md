@@ -4,7 +4,7 @@ Depsight is an extensible CLI tool for scanning and visualising project dependen
 
 ## Usage
 
-Read the [docs](https://valentintwin1206.github.io/depsight-dependency-manager/).
+Depsight is part of the [modern-python-devops-engineering](https://valentintwin1206.github.io/modern-python-devops-egineering) course and should be used in its context.
 
 ## Contributing
 
